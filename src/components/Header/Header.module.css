@@ -1,0 +1,16 @@
+.header {
+  grid-area: header;
+  background-color:#7979f3;
+  padding: 10px;
+}
+.header img {
+  width: 30px;
+}
+.login_block {
+  float: right;
+  color: azure;
+}
+
+.login_block a {
+  color: azure;
+}

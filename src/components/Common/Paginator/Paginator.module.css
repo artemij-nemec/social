@@ -1,0 +1,12 @@
+.paginatorContainer {
+    margin: 10px;
+}
+.prevButton {
+    margin-right: 5px;
+}
+.pageButton {
+    margin-right: 5px;
+}
+.selectedPage {
+    font-weight: bold;
+}
