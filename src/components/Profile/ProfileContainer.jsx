@@ -8,20 +8,21 @@ import { compose } from 'redux';
 
 class ProfileContainerAPI extends Component {
     componentDidMount() {
-        let userId = this.props.match.params.userId
+        let { match, authorizedUserId, history, setUser } = this.props
+        let userId = match.params.userId
         if (!userId) {
-            userId = this.props.authorizedUserId
+            userId = authorizedUserId
             if (!userId) {
-                this.props.history.push("/login")
+                history.push("/login")
             }
         }
         if (userId) {
-            this.props.setUser(userId)
+            setUser(userId)
         }
     }
 
     render() {
-        return <Profile {...this.props}/>
+        return <Profile {...this.props} />
     }
 }
 
@@ -37,5 +38,5 @@ let mapStateToProps = (state) => {
 export default compose(
     withRouter,
     // withAuthRedirect,
-    connect(mapStateToProps, {setUser, updateStatus})
+    connect(mapStateToProps, { setUser, updateStatus })
 )(ProfileContainerAPI)

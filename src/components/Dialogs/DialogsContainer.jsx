@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import withAuthRedirect from '../../hoc/withAuthRedirect';
 import { compose } from 'redux';
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ dialogsReducer }) => {
     return {
-        dialogs: state.dialogsReducer.dialogs,
-        messages: state.dialogsReducer.messages,
-        newMessageText: state.dialogsReducer.newMessageText
+        dialogs: dialogsReducer.dialogs,
+        messages: dialogsReducer.messages,
+        newMessageText: dialogsReducer.newMessageText
     }
 }
 const mapDispatchToProps = (dispatch) => {

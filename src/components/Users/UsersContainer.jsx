@@ -7,26 +7,39 @@ import { getUsersSelector, getTotalUsersCount, getPageSize, getCurrentPage, getI
 
 class UsersAPIComponent extends Component {
     componentDidMount() {
-        this.props.getUsersList(this.props.currentPage, this.props.pageSize)
+        const { currentPage, pageSize, getUsersList } = this.props
+        getUsersList(currentPage, pageSize)
     }
 
-    onPageChanged = (page) => {
-        if (page !== this.props.currentPage) {
-            this.props.getUsersList(page, this.props.pageSize)
+    onPageChanged = page => {
+        const { currentPage, pageSize, getUsersList } = this.props
+        if (page !== currentPage) {
+            getUsersList(page, pageSize)
         }
     }
 
     render() {
+        const {
+            isFetching,
+            unfollowUser,
+            followUser,
+            totalUsersCount,
+            pageSize,
+            currentPage,
+            users,
+            isAuth
+        } = this.props
         return <>
-            { this.props.isFetching ? <Preloader /> : null }
+            { isFetching ? <Preloader /> : null }
             <Users
                 onPageChanged={this.onPageChanged}
-                unfollowUser={this.props.unfollowUser}
-                followUser={this.props.followUser}
-                totalUsersCount={this.props.totalUsersCount}
-                pageSize={this.props.pageSize}
-                currentPage={this.props.currentPage}
-                users={this.props.users}
+                unfollowUser={unfollowUser}
+                followUser={followUser}
+                totalUsersCount={totalUsersCount}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                users={users}
+                isAuth={isAuth}
             />
         </>
     }

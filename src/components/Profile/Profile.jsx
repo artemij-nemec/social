@@ -3,13 +3,13 @@ import ProfileInfo from './ProfileInfo/ProfileInfo'
 import MyPostsContainer from './MyPosts/MyPostsContainer'
 import Preloader from '../Common/Preloader/Preloader'
 
-function Profile(props) {
-    return (props.profile ?
+function Profile({ profile, status, updateStatus }) {
+    return (profile ?
         <div>
             <ProfileInfo
-                profile={props.profile}
-                status={props.status}
-                updateStatus={props.updateStatus}
+                profile={profile}
+                status={status}
+                updateStatus={updateStatus}
             />
             <MyPostsContainer />
         </div>

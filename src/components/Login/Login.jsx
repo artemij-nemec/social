@@ -8,14 +8,14 @@ import { Redirect } from 'react-router-dom'
 import s from './Login.module.css'
 
 const maxLength = maxLengthCreator(50)
-const LoginForm = (props) => {
+const LoginForm = ({ handleSubmit, error }) => {
     return (
-        <form onSubmit={props.handleSubmit} className={s.loginForm}>
+        <form onSubmit={handleSubmit} className={s.loginForm}>
             <div>
                 <Field
                     name="login"
                     component={Input}
-                    validate={[ required, maxLength ]}
+                    validate={[required, maxLength]}
                     type="text"
                     placeholder="Login"
                     className={s.loginFormInput}
@@ -25,7 +25,7 @@ const LoginForm = (props) => {
                 <Field
                     name="password"
                     component={Input}
-                    validate={[ required, maxLength ]}
+                    validate={[required, maxLength]}
                     type="password"
                     placeholder="Password"
                     className={s.loginFormInput}
@@ -39,9 +39,9 @@ const LoginForm = (props) => {
                 />
                 <label htmlFor="rememberMe">Remember me</label>
             </div>
-            {props.error &&
+            {error &&
                 <div className={s.formError}>
-                    {props.error}
+                    {error}
                 </div>
             }
             <div>
@@ -56,8 +56,8 @@ const LoginReduxForm = reduxForm({
 })(LoginForm)
 
 const Login = (props) => {
-    const submit = values => {
-        props.login(values.login, values.password, values.rememberMe)
+    const submit = ({ login, password, rememberMe }) => {
+        props.login(login, password, rememberMe)
     }
     if (props.isAuth) {
         return <Redirect to='/profile' />

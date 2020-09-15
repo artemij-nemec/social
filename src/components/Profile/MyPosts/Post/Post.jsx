@@ -1,9 +1,9 @@
 import React from 'react'
 import s from './Post.module.css'
 
-function Post(props) {
+function Post({ message }) {
     return <div className={s.item}>
-        {props.message}
+        {message}
     </div>
 }
 

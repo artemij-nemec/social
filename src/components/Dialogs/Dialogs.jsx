@@ -7,14 +7,14 @@ import { required, maxLengthCreator } from '../../utils/validators/validators'
 import { TextArea } from '../Common/FormControls/FormControls'
 
 const maxLength = maxLengthCreator(50)
-const AddMessageForm = (props) => {
+const AddMessageForm = ({ handleSubmit }) => {
     return (
-        <form onSubmit={props.handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <div>
                 <Field
                     name="newMessageText"
                     component={TextArea}
-                    validate={[ required, maxLength ]}
+                    validate={[required, maxLength]}
                 />
             </div>
             <div>
@@ -29,13 +29,13 @@ const AddMessageReduxForm = reduxForm({
     onSubmitSuccess: afterSubmit
 })(AddMessageForm)
 
-function Dialogs(props) {
-    const dialogsList = props.dialogs
+function Dialogs({ dialogs, messages, addMessage }) {
+    const dialogsList = dialogs
         .map(dialogItem => <Dialog name={dialogItem.name} key={dialogItem.id} id={dialogItem.id} />)
-    const messagesList = props.messages
+    const messagesList = messages
         .map(messageItem => <Message text={messageItem.text} key={messageItem.id} />)
     let submit = value => {
-        props.addMessage(value.newMessageText)
+        addMessage(value.newMessageText)
     }
 
     return <div className={s.dialogs}>

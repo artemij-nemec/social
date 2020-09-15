@@ -1,9 +1,9 @@
 import React from 'react'
 import s from './Message.module.css'
 
-function Message(props) {
+function Message({ text }) {
     return <div className={s.message}>
-        {props.text}
+        { text }
     </div>
 }
 

@@ -9,46 +9,46 @@ const axiosInstance = Axios.create({
 })
 
 export const UserAPI = {
-    getUsers(currentPage = 1, pageSize = 10) {
-        return axiosInstance.get(`users?page=${currentPage}&count=${pageSize}`)
-            .then(response => response.data)
+    async getUsers(currentPage = 1, pageSize = 10) {
+        const response = await axiosInstance.get(`users?page=${currentPage}&count=${pageSize}`)
+        return response.data
     },
-    unfollow(userId = 0) {
-        return axiosInstance.delete(`follow/${userId}`)
-            .then(response => response.data)
+    async unfollow(userId = 0) {
+        const response = await axiosInstance.delete(`follow/${userId}`)
+        return response.data
     },
-    follow(userId = 0) {
-        return axiosInstance.post(`follow/${userId}`)
-            .then(response => response.data)
+    async follow(userId = 0) {
+        const response = await axiosInstance.post(`follow/${userId}`)
+        return response.data
     }
 }
 
 export const AuthAPI = {
-    authMe() {
-        return axiosInstance.get(`auth/me`)
-            .then(response => response.data)
+    async authMe() {
+        const response = await axiosInstance.get(`auth/me`)
+        return response.data
     },
-    login(email, password, rememberMe = false) {
-        return axiosInstance.post(`auth/login`, { email, password, rememberMe })
-            .then(response => response.data)
+    async login(email, password, rememberMe = false) {
+        const response = await axiosInstance.post(`auth/login`, { email, password, rememberMe })
+        return response.data
     },
-    logout() {
-        return axiosInstance.delete(`auth/login`)
-            .then(response => response.data)
+    async logout() {
+        const response = await axiosInstance.delete(`auth/login`)
+        return response.data
     }
 }
 
 export const ProfileAPI = {
-    getProfile(userId = 0) {
-        return axiosInstance.get(`profile/${userId}`)
-            .then(response => response.data)
+    async getProfile(userId = 0) {
+        const response = await axiosInstance.get(`profile/${userId}`)
+        return response.data
     },
-    getStatus(userId = 0) {
-        return axiosInstance.get(`profile/status/${userId}`)
-            .then(response => response.data)
+    async getStatus(userId = 0) {
+        const response = await axiosInstance.get(`profile/status/${userId}`)
+        return response.data
     },
-    updateStatus(status = '') {
-        return axiosInstance.put(`profile/status`, { status })
-            .then(response => response.data)
+    async updateStatus(status = '') {
+        const response = await axiosInstance.put(`profile/status`, { status })
+        return response.data
     }
 }

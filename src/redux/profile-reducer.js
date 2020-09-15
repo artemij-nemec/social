@@ -61,32 +61,28 @@ export const deletePostActionCreator = postID => ({
     postID
 })
 export const setUser = userId => {
-    return dispatch => {
-        dispatch(setUserProfile(null))
-        ProfileAPI.getProfile(userId)
-            .then(data => {
-                dispatch(setUserProfile(data))
-            })
-            .catch(error => {
-                console.log(error)
-            })
-        ProfileAPI.getStatus(userId)
-            .then(data => {
-                dispatch(setUserStatus(data))
-            })
-            .catch(error => {
-                console.log(error)
-            })
+    return async dispatch => {
+        try {
+            dispatch(setUserProfile(null))
+            const profileData = await ProfileAPI.getProfile(userId)
+            dispatch(setUserProfile(profileData))
+            const statusData = await ProfileAPI.getStatus(userId)
+            dispatch(setUserStatus(statusData))
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 export const updateStatus = status => {
-    return dispatch => {
-        ProfileAPI.updateStatus(status)
-            .then(data => {
-                if (data.resultCode === 0) {
-                    dispatch(setUserStatus(status))
-                }
-            })
+    return async dispatch => {
+        try {
+            const data = await ProfileAPI.updateStatus(status)
+            if (data.resultCode === 0) {
+                dispatch(setUserStatus(status))
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 

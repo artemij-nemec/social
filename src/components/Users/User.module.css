@@ -1,0 +1,15 @@
+.header {
+    padding: 5px;
+}
+.avatar {
+    width: 100px;
+    height: 100px;
+    float: left;
+    margin-right: 5px;
+}
+.userContainer {
+    border: 1px solid #d5d1d1;
+    margin-bottom: 5px;
+    padding: 5px;
+    min-height: 100px;
+}

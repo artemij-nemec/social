@@ -1,10 +1,10 @@
 import React from 'react'
 import s from './Dialog.module.css'
-import {NavLink} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
-function Dialog(props) {
+function Dialog({ id, name }) {
     return <div className={s.dialog}>
-        <NavLink to={"/dialogs/" + props.id}  activeClassName={s.active}>{props.name}</NavLink>
+        <NavLink to={"/dialogs/" + id} activeClassName={s.active}>{name}</NavLink>
     </div>
 }
 
