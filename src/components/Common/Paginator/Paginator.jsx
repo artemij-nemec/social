@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import s from './Paginator.module.css'
 
-const Paginator = props => {
+const Paginator = React.memo(props => {
     let [currentPortion, setCurrentPortion] = useState(1)
     const pagesCount = Math.ceil(props.totalItemsCount / props.pageSize)
     const portionSize = props.portionSize ? props.portionSize : 10
@@ -50,6 +50,6 @@ const Paginator = props => {
             }
         </div>
     )
-}
+})
 
 export default Paginator
