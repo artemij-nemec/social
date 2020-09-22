@@ -1,19 +1,18 @@
 import React, { Component } from 'react'
+import { connect, Provider } from 'react-redux'
+import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom'
+import { compose } from 'redux'
 import './App.css'
-import Navbar from './components/Navbar/Navbar'
-import ProfileContainer from './components/Profile/ProfileContainer'
-import UsersContainer from './components/Users/UsersContainer'
-import { Route, Switch, withRouter } from 'react-router-dom'
-import DialogsContainer from './components/Dialogs/DialogsContainer'
+import Preloader from './components/Common/Preloader/Preloader'
 import HeaderContainer from './components/Header/HeaderContainer'
 import Login from './components/Login/Login'
-import { connect } from 'react-redux'
-import { compose } from 'redux'
+import Navbar from './components/Navbar/Navbar'
+import ProfileContainer from './components/Profile/ProfileContainer'
+import { withSuspense } from './hoc/withSuspense'
 import { initializeApp } from './redux/app-reducer'
-import Preloader from './components/Common/Preloader/Preloader'
 import store from './redux/redux-store'
-import { Provider } from 'react-redux'
-import { BrowserRouter } from 'react-router-dom'
+const DialogsContainer = React.lazy(() => import('./components/Dialogs/DialogsContainer'))
+const UsersContainer = React.lazy(() => import('./components/Users/UsersContainer'))
 
 class App extends Component {
   componentDidMount() {
@@ -36,9 +35,9 @@ class App extends Component {
             <Route path="/profile/:userId?"
               render={() => <ProfileContainer />} />
             <Route path="/dialogs"
-              render={() => <DialogsContainer />} />
+              render={withSuspense(DialogsContainer)} />
             <Route path="/users"
-              render={() => <UsersContainer />} />
+              render={withSuspense(UsersContainer)} />
           </Switch>
         </div>
       </div>
@@ -61,7 +60,7 @@ function withBrowserRouter(Component) {
 const mapStateToProps = state => ({
   initialized: state.appReducer.initialized
 })
-const AppWithRouter =  compose(
+const AppWithRouter = compose(
   withBrowserRouter,
   withRouter,
   connect(mapStateToProps, { initializeApp })
