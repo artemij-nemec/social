@@ -48,7 +48,7 @@ class App extends Component {
 function withBrowserRouter(Component) {
   return class extends React.Component {
     render() {
-      return <BrowserRouter>
+      return <BrowserRouter basename={process.env.PUBLIC_URL} >
         <Provider store={store}>
           <Component {...this.props} />
         </Provider>
