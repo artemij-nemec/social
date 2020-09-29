@@ -4,6 +4,7 @@ const ADD_POST = 'ADD_POST'
 const DELETE_POST = 'DELETE_POST'
 const SET_USER_PROFILE = 'SET_USER_PROFILE'
 const SET_USER_STATUS = 'SET_USER_STATUS'
+const SET_PROFILE_PHOTO = 'SET_PROFILE_PHOTO'
 
 let initialState = {
     posts: [
@@ -34,6 +35,11 @@ const profileReducer = (state = initialState, action) => {
                 ...state,
                 status: action.status
             }
+        case SET_PROFILE_PHOTO:
+            return {
+                ...state,
+                profile: { ...state.profile, photos: action.photos }
+            }
         case DELETE_POST:
             return {
                 ...state,
@@ -44,13 +50,17 @@ const profileReducer = (state = initialState, action) => {
     }
 }
 
-const setUserProfile = (profile) => ({
+const setUserProfile = profile => ({
     type: SET_USER_PROFILE,
     profile
 })
-const setUserStatus = (status) => ({
+const setUserStatus = status => ({
     type: SET_USER_STATUS,
     status
+})
+const setProfilePhoto = photos => ({
+    type: SET_PROFILE_PHOTO,
+    photos
 })
 export const addPostActionCreator = newPostText => ({
     type: ADD_POST,
@@ -79,6 +89,18 @@ export const updateStatus = status => {
             const data = await ProfileAPI.updateStatus(status)
             if (data.resultCode === 0) {
                 dispatch(setUserStatus(status))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+export const uploadProfilePhoto = photo => {
+    return async dispatch => {
+        try {
+            const response = await ProfileAPI.uploadProfilePhoto(photo)
+            if (response.resultCode === 0) {
+                dispatch(setProfilePhoto(response.data.photos))
             }
         } catch (error) {
             console.log(error)
