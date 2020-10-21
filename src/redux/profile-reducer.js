@@ -1,3 +1,4 @@
+import { stopSubmit } from "redux-form"
 import { ProfileAPI } from "../api/api"
 
 const ADD_POST = 'ADD_POST'
@@ -105,6 +106,39 @@ export const uploadProfilePhoto = photo => {
         } catch (error) {
             console.log(error)
         }
+    }
+}
+export const saveProfile = (profileData) => {
+    return async dispatch => {
+        try {
+            const response = await ProfileAPI.uploadProfileData(profileData)
+            if (response.resultCode === 0) {
+                dispatch(setUserProfile(profileData))
+            } else {
+                const message = response.messages.length > 0 && response.messages[0]
+                    ? response.messages[0]
+                    : "Unknown error"
+                const errors = getErrorObjectFromMessage(message)
+                dispatch(stopSubmit('edit-profile', errors))
+                return Promise.reject(message)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+const getErrorObjectFromMessage = message => {
+    const contacts = message.match(/\(Contacts->(.*)\)/)
+    if (contacts && contacts[1]) {
+        const contactField = contacts[1].toLowerCase()
+        return {
+            contacts: {
+                [contactField]: message
+            }
+        }
+    } else {
+        return { _error: message }
     }
 }
 

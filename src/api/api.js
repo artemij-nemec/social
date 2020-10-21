@@ -56,5 +56,9 @@ export const ProfileAPI = {
         formData.append("image", file);
         const response = await axiosInstance.put(`profile/photo`, formData)
         return response.data
+    },
+    async uploadProfileData(profileData) {
+        const response = await axiosInstance.put(`profile`, profileData)
+        return response.data
     }
 }

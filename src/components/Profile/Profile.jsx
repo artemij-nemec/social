@@ -3,7 +3,7 @@ import ProfileInfo from './ProfileInfo/ProfileInfo'
 import MyPostsContainer from './MyPosts/MyPostsContainer'
 import Preloader from '../Common/Preloader/Preloader'
 
-function Profile({ profile, status, updateStatus, isOwner, uploadProfilePhoto }) {
+function Profile({ profile, status, updateStatus, isOwner, uploadProfilePhoto, saveProfile }) {
     return (profile ?
         <div>
             <ProfileInfo
@@ -12,6 +12,7 @@ function Profile({ profile, status, updateStatus, isOwner, uploadProfilePhoto })
                 updateStatus={updateStatus}
                 isOwner={isOwner}
                 uploadProfilePhoto={uploadProfilePhoto}
+                saveProfile={saveProfile}
             />
             <MyPostsContainer />
         </div>

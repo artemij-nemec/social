@@ -1,0 +1,6 @@
+.paddingLeft10px {
+    padding-left: 10px;
+}
+.formError {
+    border: 1px solid red;
+}
