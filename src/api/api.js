@@ -28,8 +28,8 @@ export const AuthAPI = {
         const response = await axiosInstance.get(`auth/me`)
         return response.data
     },
-    async login(email, password, rememberMe = false) {
-        const response = await axiosInstance.post(`auth/login`, { email, password, rememberMe })
+    async login(email, password, rememberMe = false, captcha = '') {
+        const response = await axiosInstance.post(`auth/login`, { email, password, rememberMe, captcha })
         return response.data
     },
     async logout() {
@@ -60,5 +60,12 @@ export const ProfileAPI = {
     async uploadProfileData(profileData) {
         const response = await axiosInstance.put(`profile`, profileData)
         return response.data
+    }
+}
+
+export const SecurityAPI = {
+    async getCaptchaUrl() {
+        const response = await axiosInstance.get('/security/get-captcha-url')
+        return response.data.url
     }
 }

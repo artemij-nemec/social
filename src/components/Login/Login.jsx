@@ -8,7 +8,7 @@ import { Redirect } from 'react-router-dom'
 import s from './Login.module.css'
 
 const maxLength = maxLengthCreator(50)
-const LoginForm = ({ handleSubmit, error }) => {
+const LoginForm = ({ handleSubmit, error, captchaUrl }) => {
     return (
         <form onSubmit={handleSubmit} className={s.loginForm}>
             <div>
@@ -39,6 +39,19 @@ const LoginForm = ({ handleSubmit, error }) => {
                 />
                 <label htmlFor="rememberMe">Remember me</label>
             </div>
+            {captchaUrl &&
+                <>
+                    <img src={captchaUrl} alt="" />
+                    <Field
+                        name="captcha"
+                        component={Input}
+                        validate={[required]}
+                        type="text"
+                        placeholder="Captcha"
+                        className={s.loginFormInput}
+                    />
+                </>
+            }
             {error &&
                 <div className={s.formError}>
                     {error}
@@ -56,8 +69,8 @@ const LoginReduxForm = reduxForm({
 })(LoginForm)
 
 const Login = (props) => {
-    const submit = ({ login, password, rememberMe }) => {
-        props.login(login, password, rememberMe)
+    const submit = ({ login, password, rememberMe, captcha }) => {
+        props.login(login, password, rememberMe, captcha)
     }
     if (props.isAuth) {
         return <Redirect to='/profile' />
@@ -65,11 +78,12 @@ const Login = (props) => {
 
     return (<>
         <h1>Login</h1>
-        <LoginReduxForm onSubmit={submit} />
+        <LoginReduxForm onSubmit={submit} captchaUrl={props.captchaUrl} />
     </>)
 }
 const mapStateToProps = state => ({
-    isAuth: state.authReducer.isAuth
+    isAuth: state.authReducer.isAuth,
+    captchaUrl: state.authReducer.captchaUrl
 })
 
 export default connect(mapStateToProps, { login, logout })(Login)
