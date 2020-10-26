@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect, Provider } from 'react-redux'
-import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch, withRouter } from 'react-router-dom'
 import { compose } from 'redux'
 import './App.css'
 import Preloader from './components/Common/Preloader/Preloader'
@@ -15,8 +15,15 @@ const DialogsContainer = React.lazy(() => import('./components/Dialogs/DialogsCo
 const UsersContainer = React.lazy(() => import('./components/Users/UsersContainer'))
 
 class App extends Component {
+  errorHandler = error => (
+    alert("Error occurred: " + error.reason.message)
+  );
   componentDidMount() {
+    window.addEventListener('unhandledrejection', this.errorHandler)
     this.props.initializeApp()
+  }
+  componentWillUnmount() {
+    window.removeEventListener('unhandledrejection', this.errorHandler)
   }
   render() {
     if (!this.props.initialized) {
@@ -31,6 +38,8 @@ class App extends Component {
         <Navbar />
         <div className="app_wrapper_content">
           <Switch>
+            <Route exact path="/"
+              render={() => <Redirect to="/profile" />} />
             <Route path="/login" component={Login} />
             <Route path="/profile/:userId?"
               render={() => <ProfileContainer />} />
@@ -38,6 +47,8 @@ class App extends Component {
               render={withSuspense(DialogsContainer)} />
             <Route path="/users"
               render={withSuspense(UsersContainer)} />
+            <Route path="*"
+              render={() => <div>404 NOT FOUND</div>} />
           </Switch>
         </div>
       </div>

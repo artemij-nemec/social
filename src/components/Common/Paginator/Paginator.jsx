@@ -1,3 +1,4 @@
+import classNames from "classnames"
 import React, { useState } from 'react'
 import s from './Paginator.module.css'
 
@@ -34,7 +35,10 @@ const Paginator = React.memo(props => {
             {pages.map(page =>
                 <button
                     key={page}
-                    className={s.pageButton + ' ' + (page === props.currentPage ? s.selectedPage : '')}
+                    className={classNames(
+                        s.pageButton, 
+                        { [s.selectedPage]: page === props.currentPage }
+                    )}
                     onClick={() => {
                         props.onPageChanged(page)
                     }}
