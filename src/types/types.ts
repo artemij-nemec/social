@@ -40,8 +40,6 @@ export type NavigationElementType = {
     name:   string
 }
 //functions
-export type LoginType = (email: string, password: string, rememberMe: boolean, captcha: string) => void
-export type LogoutType = () => void
 export type UpdateStatusType = (newStatus: string) => void
 export type UploadProfilePhotoType = (file: File) => void
 export type SaveProfileType = (profileData: ProfileType) => void

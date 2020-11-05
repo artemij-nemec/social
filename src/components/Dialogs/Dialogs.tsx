@@ -1,5 +1,5 @@
-import React from 'react'
-import { Field, InjectedFormProps, reduxForm, reset } from 'redux-form'
+import React, { Dispatch } from 'react'
+import { Field, FormAction, InjectedFormProps, reduxForm, reset } from 'redux-form'
 import { DialogType, MessageType } from '../../types/types'
 import { maxLengthCreator, required } from '../../utils/validators/validators'
 import { TextArea } from '../Common/FormControls/FormControls'
@@ -30,7 +30,7 @@ const AddMessageForm: React.FC<InjectedFormProps<FormPropsType & AddMessageFormP
         </form>
     )
 }
-const afterSubmit = (result: string, dispatch: any) => dispatch(reset('addMessage'))
+const afterSubmit = (result: string, dispatch: Dispatch<FormAction>) => dispatch(reset('addMessage'))
 const AddMessageReduxForm = reduxForm<FormPropsType & AddMessageFormPropsType>({
     form: 'addMessage',
     onSubmitSuccess: afterSubmit

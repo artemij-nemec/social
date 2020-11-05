@@ -4,7 +4,6 @@ import { Redirect } from 'react-router-dom'
 import { Field, InjectedFormProps, reduxForm } from 'redux-form'
 import { login, logout } from '../../redux/auth-reducer'
 import { RootStateType } from '../../redux/redux-store'
-import { LoginType, LogoutType } from '../../types/types'
 import { maxLengthCreator, required } from '../../utils/validators/validators'
 import { Input } from '../Common/FormControls/FormControls'
 import s from './Login.module.css'
@@ -109,8 +108,8 @@ type mapStateToPropsType = {
     captchaUrl: string | null
 }
 type mapDispatchToPropsType = {
-    login:  LoginType
-    logout: LogoutType
+    login:  (email: string, password: string, rememberMe: boolean, captcha: string) => void
+    logout: () => void
 }
 type LoginOwnPropsType = {}
 const mapStateToProps = (state: RootStateType): mapStateToPropsType => ({

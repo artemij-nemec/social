@@ -1,4 +1,6 @@
+import { ThunkAction } from "redux-thunk"
 import { authMe } from "./auth-reducer"
+import { RootStateType } from "./redux-store"
 
 const INITIALIZED_SUCCESS = 'app/INITIALIZED_SUCCESS'
 
@@ -22,11 +24,10 @@ let appReducer = (state: AppStateType = initialState, action: InitializedSuccess
 }
 
 export const initializedSuccess = (): InitializedSuccessActionType => ({ type: INITIALIZED_SUCCESS })
-export const initializeApp = () => (dispatch: any) => {
-    let promise = dispatch(authMe())
-    promise.then(() => {
-        dispatch(initializedSuccess())
-    })
+type ThunkType = ThunkAction<Promise<void>, RootStateType, unknown, InitializedSuccessActionType>
+export const initializeApp = (): ThunkType => async dispatch => {
+    await dispatch(authMe())
+    dispatch(initializedSuccess())
 }
 
 export default appReducer

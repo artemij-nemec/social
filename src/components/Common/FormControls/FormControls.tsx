@@ -2,8 +2,11 @@ import React from 'react'
 import s from './FormControls.module.css'
 
 type PropsType = {
-    input: any
-    meta: any
+    input: Array<string>
+    meta: {
+        error:      string
+        touched:    boolean
+    }
 }
 export const TextArea: React.FC<PropsType> = ({input, meta, ...props}) => {
     const hasError = meta.error && meta.touched

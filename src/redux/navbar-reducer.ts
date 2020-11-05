@@ -9,7 +9,7 @@ let initialState = {
     ] as Array<NavigationElementType>
 }
 export type NavbarStateType = typeof initialState
-const navbarReducer = (state = initialState, action: any): NavbarStateType => {
+const navbarReducer = (state = initialState): NavbarStateType => {
     return state
 }
 
