@@ -87,7 +87,7 @@ const LoginReduxForm = reduxForm<LoginFormType, OwnPropsType>({
 })(LoginForm)
 
 ///Login
-type LoginPropsType = mapStateToPropsType & mapDispatchToPropsType
+type LoginPropsType = MapStateToPropsType & MapDispatchToPropsType
 const Login: React.FC<LoginPropsType> = (props) => {
     const submit = ({ login, password, rememberMe, captcha }: LoginFormType) => {
         props.login(login, password, rememberMe, captcha)
@@ -102,22 +102,22 @@ const Login: React.FC<LoginPropsType> = (props) => {
     </>)
 }
 
-///connected Login
-type mapStateToPropsType = {
+//connected Login
+type MapStateToPropsType = {
     isAuth:     boolean
     captchaUrl: string | null
 }
-type mapDispatchToPropsType = {
+type MapDispatchToPropsType = {
     login:  (email: string, password: string, rememberMe: boolean, captcha: string) => void
     logout: () => void
 }
 type LoginOwnPropsType = {}
-const mapStateToProps = (state: RootStateType): mapStateToPropsType => ({
+const mapStateToProps = (state: RootStateType): MapStateToPropsType => ({
     isAuth: state.authReducer.isAuth,
     captchaUrl: state.authReducer.captchaUrl
 })
 
-export default connect<mapStateToPropsType, mapDispatchToPropsType, LoginOwnPropsType, RootStateType>(
+export default connect<MapStateToPropsType, MapDispatchToPropsType, LoginOwnPropsType, RootStateType>(
     mapStateToProps,
     { login, logout }
 )(Login)
