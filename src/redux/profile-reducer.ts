@@ -1,6 +1,7 @@
 import { FormAction, stopSubmit } from "redux-form"
 import { ThunkAction } from "redux-thunk"
-import { ProfileAPI, ResponseCodes } from "../api/api"
+import { ResponseCodes } from "../api/api"
+import { ProfileAPI } from "../api/profile-api"
 import { ContactsType, PhotosType, PostType, ProfileType, SetUserType } from "../types/types"
 import { ActionTypes, RootStateType } from "./redux-store"
 

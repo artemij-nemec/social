@@ -1,5 +1,6 @@
 import { ThunkAction } from "redux-thunk"
-import { ResponseCodes, UserAPI } from "../api/api"
+import { ResponseCodes } from "../api/api"
+import { UserAPI } from "../api/users-api"
 import { UserType } from "../types/types"
 import { ActionTypes, RootStateType } from "./redux-store"
 

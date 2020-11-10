@@ -1,6 +1,8 @@
 import { FormAction, stopSubmit } from "redux-form"
 import { ThunkAction } from "redux-thunk"
-import { AuthAPI, ResponseCodes, ResponseCodesCaptcha, SecurityAPI } from "../api/api"
+import { ResponseCodes, ResponseCodesCaptcha } from "../api/api"
+import { SecurityAPI } from "../api/security-api"
+import { AuthAPI } from "../api/auth-api"
 import { ActionTypes, RootStateType } from "./redux-store"
 
 let initialState = {
@@ -66,7 +68,7 @@ export const login: LoginType = (email, password, rememberMe, captcha) => {
     return async dispatch => {
         try {
             const data = await AuthAPI.login(email, password, rememberMe, captcha)
-            if (data.resultCode === ResponseCodesCaptcha.Success) {
+            if (data.resultCode === ResponseCodes.Success) {
                 dispatch(authMe())
             } else {
                 if (data.resultCode === ResponseCodesCaptcha.CaptchaRequired) {
