@@ -1,10 +1,7 @@
 import { FormAction, stopSubmit } from "redux-form"
 import { ThunkAction } from "redux-thunk"
 import { AuthAPI, ResponseCodes, ResponseCodesCaptcha, SecurityAPI } from "../api/api"
-import { RootStateType } from "./redux-store"
-
-const SET_USER_DATA = 'auth/SET_USER_DATA'
-const SET_CAPTCHA_URL = 'auth/SET_CAPTCHA_URL'
+import { ActionTypes, RootStateType } from "./redux-store"
 
 let initialState = {
     userId:     null as number | null,
@@ -15,30 +12,17 @@ let initialState = {
     captchaUrl: null as string | null
 }
 export type AuthStateType = typeof initialState
-type AuthSetUserDataType = {
-    userId: number | null
-    login:  string | null
-    email:  string | null
-    isAuth: boolean
-}
-type AuthSetUserDataActionType = {
-    type:       typeof SET_USER_DATA
-    data:       AuthSetUserDataType
-}
-type AuthSetCaptchaUrlActionType = {
-    type:       typeof SET_CAPTCHA_URL
-    data:       string
-}
-type ActionsType = AuthSetUserDataActionType | AuthSetCaptchaUrlActionType
+
+type ActionsType = ActionTypes<typeof actions>
 
 let authReducer = (state = initialState, action: ActionsType): AuthStateType => {
     switch (action.type) {
-        case SET_USER_DATA:
+        case 'SET_USER_DATA':
             return {
                 ...state,
                 ...action.data
             }
-        case SET_CAPTCHA_URL:
+        case 'SET_CAPTCHA_URL':
             return {
                 ...state,
                 captchaUrl: action.data
@@ -48,14 +32,16 @@ let authReducer = (state = initialState, action: ActionsType): AuthStateType => 
     }
 }
 
-export const setUserData = (userId: number | null, login: string | null, email: string | null, isAuth = false): AuthSetUserDataActionType => ({
-    type: SET_USER_DATA,
-    data: { userId, login, email, isAuth }
-})
-export const setCaptchaUrl = (captchaUrl: string): AuthSetCaptchaUrlActionType => ({
-    type: SET_CAPTCHA_URL,
-    data: captchaUrl
-})
+export const actions = {
+    setUserData: (userId: number | null, login: string | null, email: string | null, isAuth = false) => ({
+        type: 'SET_USER_DATA',
+        data: { userId, login, email, isAuth }
+    } as const),
+    setCaptchaUrl: (captchaUrl: string) => ({
+        type: 'SET_CAPTCHA_URL',
+        data: captchaUrl
+    } as const)
+}
 type ThunkType = ThunkAction<Promise<void>, RootStateType, unknown, ActionsType>
 export const authMe = (): ThunkType => {
     return async dispatch => {
@@ -63,7 +49,7 @@ export const authMe = (): ThunkType => {
             const data = await AuthAPI.authMe()
             if (data.resultCode === ResponseCodes.Success) {
                 let { id, login, email } = data.data
-                dispatch(setUserData(id, login, email, true))
+                dispatch(actions.setUserData(id, login, email, true))
             }
         } catch (error) {
             console.log(error)
@@ -102,7 +88,7 @@ export const logout: LogoutType = () => {
         try {
             const data = await AuthAPI.logout()
             if (data.resultCode === ResponseCodes.Success) {
-                dispatch(setUserData(null, null, null, false))
+                dispatch(actions.setUserData(null, null, null, false))
             }
         } catch (error) {
             console.log(error)
@@ -113,7 +99,7 @@ export const getCaptchaUrl = (): ThunkType => {
     return async dispatch => {
         try {
             const url = await SecurityAPI.getCaptchaUrl()
-            dispatch(setCaptchaUrl(url))
+            dispatch(actions.setCaptchaUrl(url))
         } catch (error) {
             console.log(error)
         }

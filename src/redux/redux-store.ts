@@ -20,6 +20,14 @@ let reducers = combineReducers({
 // @ts-ignore
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const store = createStore(reducers, composeEnhancers(applyMiddleware(reduxThunk)))
+type Actions = {
+    [key: string]: (...args: any[]) => {
+        type: string
+        [key: string]: any
+    }
+}
+type InferValueTypes<T> = T extends { [key: string]: infer U } ? U : never
+export type ActionTypes<T extends Actions> = ReturnType<InferValueTypes<T>>
 
 export type RootStateType = ReturnType<typeof reducers>
 export default store

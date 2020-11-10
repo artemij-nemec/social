@@ -1,8 +1,9 @@
 import { ProfileStateType } from './profile-reducer'
 // import React from 'react'
 // import { render } from '@testing-library/react'
-import profileReducer, { addPostActionCreator, deletePostActionCreator } from './profile-reducer'
+import profileReducer, { actions } from './profile-reducer'
 
+const { addPostActionCreator, deletePostActionCreator } = actions
 let state: ProfileStateType = {
     posts: [
         { id: 1, message: 'Message 1' },
