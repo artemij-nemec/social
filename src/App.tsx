@@ -9,16 +9,18 @@ import Login from './components/Login/Login'
 import Navbar from './components/Navbar/Navbar'
 import ProfileContainer from './components/Profile/ProfileContainer'
 import { withSuspense } from './hoc/withSuspense'
-import { initializeApp, AppStateType } from './redux/app-reducer'
+import { initializeApp } from './redux/app-reducer'
 import store, { RootStateType } from './redux/redux-store'
 const UsersContainer = React.lazy(() => import('./components/Users/UsersContainer'))
-const DialogsContainer = React.lazy((): any => import('./components/Dialogs/DialogsContainer'))
+const DialogsContainer = React.lazy(() => import('./components/Dialogs/DialogsContainer'))
+const SuspendedDialogsContainer = withSuspense(DialogsContainer)
+const SuspendedUsersContainer = withSuspense(UsersContainer)
 
-type PropsType = AppStateType & {
+type PropsType = ReturnType<typeof mapStateToProps> & {
   initializeApp: () => void
 }
 class App extends Component<PropsType> {
-  errorHandler = (error: any) => (
+  errorHandler = (error: PromiseRejectionEvent) => (
     alert("Error occurred: " + error.reason.message)
   )
   componentDidMount() {
@@ -44,9 +46,9 @@ class App extends Component<PropsType> {
             <Route path='/profile/:userId?'
               render={() => <ProfileContainer />} />
             <Route path='/dialogs'
-              render={withSuspense(DialogsContainer)} />
+              render={() => <SuspendedDialogsContainer />} />
             <Route path='/users'
-              render={withSuspense(UsersContainer)} />
+              render={() => <SuspendedUsersContainer />} />
             <Route path='*'
               render={() => <div>404 NOT FOUND</div>} />
           </Switch>
@@ -56,8 +58,8 @@ class App extends Component<PropsType> {
   }
 }
 
-function withBrowserRouter(Component: React.ComponentType<any>) {
-  return class extends React.Component<any> {
+function withBrowserRouter(Component: React.ComponentType) {
+  return class extends React.Component {
     render() {
       return (<BrowserRouter basename={process.env.PUBLIC_URL} >
         <Provider store={store}>
@@ -72,7 +74,7 @@ function withBrowserRouter(Component: React.ComponentType<any>) {
 const mapStateToProps = (state: RootStateType) => ({
   initialized: state.appReducer.initialized
 })
-const AppWithRouter = compose(
+const AppWithRouter = compose<React.ComponentType>(
   withBrowserRouter,
   withRouter,
   connect(mapStateToProps, { initializeApp })

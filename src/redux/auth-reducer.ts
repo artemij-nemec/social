@@ -1,9 +1,8 @@
 import { FormAction, stopSubmit } from "redux-form"
-import { ThunkAction } from "redux-thunk"
 import { ResponseCodes, ResponseCodesCaptcha } from "../api/api"
-import { SecurityAPI } from "../api/security-api"
 import { AuthAPI } from "../api/auth-api"
-import { ActionTypes, RootStateType } from "./redux-store"
+import { SecurityAPI } from "../api/security-api"
+import { ActionTypes, ThunkType } from "./redux-store"
 
 let initialState = {
     userId:     null as number | null,
@@ -44,8 +43,7 @@ export const actions = {
         data: captchaUrl
     } as const)
 }
-type ThunkType = ThunkAction<Promise<void>, RootStateType, unknown, ActionsType>
-export const authMe = (): ThunkType => {
+export const authMe = (): ThunkType<ActionsType> => {
     return async dispatch => {
         try {
             const data = await AuthAPI.authMe()
@@ -63,7 +61,7 @@ export type LoginType = (
     password: string,
     rememberMe: boolean,
     captcha: string
-) => ThunkAction<Promise<void>, RootStateType, unknown, ActionsType | FormAction>
+) => ThunkType<ActionsType | FormAction>
 export const login: LoginType = (email, password, rememberMe, captcha) => {
     return async dispatch => {
         try {
@@ -84,7 +82,7 @@ export const login: LoginType = (email, password, rememberMe, captcha) => {
         }
     }
 }
-export type LogoutType = () => ThunkType
+export type LogoutType = () => ThunkType<ActionsType>
 export const logout: LogoutType = () => {
     return async dispatch => {
         try {
@@ -97,7 +95,7 @@ export const logout: LogoutType = () => {
         }
     }
 }
-export const getCaptchaUrl = (): ThunkType => {
+export const getCaptchaUrl = (): ThunkType<ActionsType> => {
     return async dispatch => {
         try {
             const url = await SecurityAPI.getCaptchaUrl()

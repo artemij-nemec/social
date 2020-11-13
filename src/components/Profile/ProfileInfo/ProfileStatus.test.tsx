@@ -1,15 +1,18 @@
 import React from 'react'
-import { act, create } from 'react-test-renderer';
+import { act, create, ReactTestRenderer } from 'react-test-renderer';
 import { UpdateStatusType } from '../../../types/types';
 import ProfileStatus from './ProfileStatus';
 
 const updateStatus: UpdateStatusType = (newStatus) => {}
 describe('Profile status componen', () => {
     test('status should be in the state', () => {
-        let component: any
+        let component = null as ReactTestRenderer | null
         act(() => {
             component = create(<ProfileStatus status="test status" updateStatus={updateStatus} />)
         })
+        if (!component) {
+            return false
+        }
         const instance = component.root
         const span = instance.findByType("span");
         expect(span.props.children).toBe("test status")
@@ -25,10 +28,13 @@ describe('Profile status componen', () => {
         expect(instance.findAllByType("input").length).toBe(0)
     });
     test('<input> should be shown after dblclick', () => {
-        let component: any
+        let component = null as ReactTestRenderer | null
         act(() => {
             component = create(<ProfileStatus status="test status" updateStatus={updateStatus} />)
         })
+        if (!component) {
+            return false
+        }
         const instance = component.root
         const span = instance.findByType("span");
         act(() => {
@@ -39,10 +45,13 @@ describe('Profile status componen', () => {
     });
     test('callback shoud be called', () => {
         const mockCallbeck = jest.fn()
-        let component: any
+        let component = null as ReactTestRenderer | null
         act(() => {
             component = create(<ProfileStatus status="test status" updateStatus={mockCallbeck}/>)
         })
+        if (!component) {
+            return false
+        }
         const instance = component.root
         const span = instance.findByType("span");
         act(() => {

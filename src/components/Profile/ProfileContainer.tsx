@@ -4,17 +4,27 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'redux';
 import { saveProfile, setUser, updateStatus, uploadProfilePhoto } from '../../redux/profile-reducer';
 import { RootStateType } from '../../redux/redux-store';
-import { ProfileType, SaveProfileType, SetUserType, UpdateStatusType, UploadProfilePhotoType } from '../../types/types';
+import { SaveProfileType, SetUserType, UpdateStatusType, UploadProfilePhotoType } from '../../types/types';
 import Profile from './Profile';
 
-interface PropsType extends RouteComponentProps<any> {
+type PathParamsType = {
+    userId: string
+}
+interface PropsType extends RouteComponentProps<PathParamsType> {
     authorizedUserId:   number
     setUser:            SetUserType
-  }
+}
+type MapStateToPropsType = ReturnType<typeof mapStateToProps>
+type MapDispatchToPropsType = {
+    setUser:            SetUserType
+    updateStatus:       UpdateStatusType
+    uploadProfilePhoto: UploadProfilePhotoType
+    saveProfile:        SaveProfileType
+}
 class ProfileContainerAPI extends Component<PropsType & MapStateToPropsType & MapDispatchToPropsType> {
     updateProfile() {
         let { match, authorizedUserId, history, setUser } = this.props
-        let userId = match.params.userId
+        let userId = Number(match.params.userId)
         if (!userId) {
             userId = authorizedUserId
             if (!userId) {
@@ -40,13 +50,7 @@ class ProfileContainerAPI extends Component<PropsType & MapStateToPropsType & Ma
     }
 }
 
-type MapStateToPropsType = {
-    profile:            ProfileType | null
-    status:             string
-    authorizedUserId:   number | null
-    isAuth:             boolean
-}
-let mapStateToProps = (state: RootStateType): MapStateToPropsType => {
+let mapStateToProps = (state: RootStateType) => {
     return {
         profile: state.profileReducer.profile,
         status: state.profileReducer.status,
@@ -54,16 +58,10 @@ let mapStateToProps = (state: RootStateType): MapStateToPropsType => {
         isAuth: state.authReducer.isAuth
     }
 }
-type MapDispatchToPropsType = {
-    setUser:            SetUserType
-    updateStatus:       UpdateStatusType
-    uploadProfilePhoto: UploadProfilePhotoType
-    saveProfile:        SaveProfileType
-}
-export default compose<any>(
+export default compose<React.ComponentType>(
     withRouter,
     // withAuthRedirect,
-    connect<MapStateToPropsType, MapDispatchToPropsType, {}, RootStateType>(
+    connect(
         mapStateToProps,
         { setUser, updateStatus, uploadProfilePhoto, saveProfile }
     )

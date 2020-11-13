@@ -10,11 +10,9 @@ import Message from './Message/Message'
 type FormPropsType = {
     newMessageText: string
 }
-type AddMessageFormPropsType = {
-    handleSubmit: (value: FormPropsType) => void
-}
+
 const maxLength = maxLengthCreator(50)
-const AddMessageForm: React.FC<InjectedFormProps<FormPropsType & AddMessageFormPropsType>> = ({ handleSubmit }) => {
+const AddMessageForm: React.FC<InjectedFormProps<FormPropsType>> = ({ handleSubmit }) => {
     return (
         <form onSubmit={handleSubmit}>
             <div>
@@ -31,7 +29,7 @@ const AddMessageForm: React.FC<InjectedFormProps<FormPropsType & AddMessageFormP
     )
 }
 const afterSubmit = (result: string, dispatch: Dispatch<FormAction>) => dispatch(reset('addMessage'))
-const AddMessageReduxForm = reduxForm<FormPropsType & AddMessageFormPropsType>({
+const AddMessageReduxForm = reduxForm<FormPropsType>({
     form: 'addMessage',
     onSubmitSuccess: afterSubmit
 })(AddMessageForm)

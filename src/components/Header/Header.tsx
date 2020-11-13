@@ -2,12 +2,14 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import s from './Header.module.css'
 
-type HeaderPropsType = {
+export type MapPropsType = {
     login:  string | null
     isAuth: boolean
+}
+export type DispatchPropsType = {
     logout: () => void
 }
-const Header: React.FC<HeaderPropsType> = ({ login, logout, isAuth }) => {
+const Header: React.FC<MapPropsType & DispatchPropsType> = ({ login, logout, isAuth }) => {
     return <header className={s.header}>
         <div className={s.login_block}>
             {isAuth ?

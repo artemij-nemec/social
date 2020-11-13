@@ -6,7 +6,7 @@ import { ProfileDataReduxForm } from './ProfileDataForm'
 import s from './ProfileInfo.module.css'
 import ProfileStatus from './ProfileStatus'
 
-type ProfileInfoPropsType = {
+type PropsType = {
     status:             string
     profile:            ProfileType
     isOwner:            boolean
@@ -14,7 +14,7 @@ type ProfileInfoPropsType = {
     uploadProfilePhoto: UploadProfilePhotoType
     saveProfile:        SaveProfileType
 }
-const ProfileInfo: React.FC<ProfileInfoPropsType> = ({
+const ProfileInfo: React.FC<PropsType> = ({
     profile,
     status,
     updateStatus,
@@ -24,9 +24,9 @@ const ProfileInfo: React.FC<ProfileInfoPropsType> = ({
 }) => {
     let [editMode, setEditMode] = useState(false)
     const enableEditMode = () => setEditMode(true)
-    const onSubmit = (profileData: ProfileType) => {
-        saveProfile(profileData)
-        // setEditMode(false)
+    const onSubmit = async (profileData: ProfileType) => {
+        await saveProfile(profileData)
+        setEditMode(false)
     }
     return <div>
         <img

@@ -20,8 +20,7 @@ type MapDispatchPropsType = {
     unfollowUser:       (id: number) => void
     followUser:         (id: number) => void
 }
-type OwnPropsType = {}
-type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType
+type PropsType = MapStatePropsType & MapDispatchPropsType
 class UsersAPIComponent extends Component<PropsType> {
     componentDidMount() {
         const { currentPage, pageSize, getUsersList } = this.props
@@ -73,7 +72,7 @@ const mapStateToProps = (state: RootStateType): MapStatePropsType => {
     }
 }
 
-const UsersContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, RootStateType>(
+const UsersContainer = connect<MapStatePropsType, MapDispatchPropsType, {}, RootStateType>(
     mapStateToProps,
     {
         followUser,

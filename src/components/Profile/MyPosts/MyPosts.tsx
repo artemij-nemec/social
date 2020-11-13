@@ -1,5 +1,5 @@
-import React from 'react'
-import { Field, InjectedFormProps, reduxForm, reset } from 'redux-form'
+import React, { Dispatch } from 'react'
+import { Field, FormAction, InjectedFormProps, reduxForm, reset } from 'redux-form'
 import { PostType } from '../../../types/types'
 import { maxLengthCreator, required } from '../../../utils/validators/validators'
 import { TextArea } from '../../Common/FormControls/FormControls'
@@ -10,12 +10,9 @@ import Post from './Post/Post'
 type FormPropsType = {
     newPostText: string
 }
-type FormHandlerType = {
-    handleSubmit:   (value: FormPropsType) => void
-}
-type FormType = FormPropsType & FormHandlerType
+
 const maxLength = maxLengthCreator(10)
-const MyPostsForm: React.FC<InjectedFormProps<FormType>> = ({ handleSubmit }) => {
+const MyPostsForm: React.FC<InjectedFormProps<FormPropsType>> = ({ handleSubmit }) => {
     return (
         <form onSubmit={handleSubmit}>
             <div>
@@ -35,8 +32,8 @@ const MyPostsForm: React.FC<InjectedFormProps<FormType>> = ({ handleSubmit }) =>
     )
 }
 
-const afterSubmit = (result: any, dispatch: any) => dispatch(reset('addNewPost'))
-const MyPostsReduxForm = reduxForm<FormType>({
+const afterSubmit = (result: boolean, dispatch: Dispatch<FormAction>) => dispatch(reset('addNewPost'))
+const MyPostsReduxForm = reduxForm<FormPropsType>({
     form: 'addNewPost',
     onSubmitSuccess: afterSubmit
 })(MyPostsForm)

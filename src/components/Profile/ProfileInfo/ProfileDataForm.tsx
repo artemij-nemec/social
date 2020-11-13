@@ -4,15 +4,12 @@ import { ContactsType, ProfileType, UploadProfilePhotoType } from '../../../type
 import { Input, TextArea } from '../../Common/FormControls/FormControls'
 import s from './ProfileInfo.module.css'
 
-type FormHandlerType = {
-    handleSubmit:   (value: ProfileType) => void
-}
 type OwnPropsType = {
     contacts:           ContactsType
     isOwner:            boolean
     uploadProfilePhoto: UploadProfilePhotoType
 }
-type FormType = ProfileType & FormHandlerType
+type FormType = ProfileType
 
 const ProfileDataForm: React.FC<OwnPropsType &
     InjectedFormProps<FormType, OwnPropsType>
@@ -24,7 +21,7 @@ const ProfileDataForm: React.FC<OwnPropsType &
     error
 }) => {
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length) {
+        if (e.target.files?.length) {
             uploadProfilePhoto(e.target.files[0])
         }
     }
