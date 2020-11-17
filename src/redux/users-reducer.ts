@@ -91,7 +91,7 @@ const actions = {
     setUsersTotalCount: (count: number) => ({ type: 'SET_USERS_TOTAL_COUNT', count } as const),
     toggleIsFetching: () => ({ type: 'TOGGLE_IS_FETCHING' } as const)
 }
-
+export { actions as usersActions }
 export const getUsersList = (
     currentPage: number,
     pageSize: number
