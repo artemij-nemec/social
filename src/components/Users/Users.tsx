@@ -1,8 +1,10 @@
 import React from 'react'
+import { UsersFilterType } from '../../redux/users-reducer'
 import { followUser, unfollowUser, UserType } from '../../types/types'
 import Paginator from '../Common/Paginator/Paginator'
 import User from './User'
 import s from './Users.module.css'
+import { UserSearchForm } from './UserSearchForm'
 
 type UsersPropsType = {
     totalUsersCount:    number
@@ -11,7 +13,9 @@ type UsersPropsType = {
     currentPage:        number
     isAuth:             boolean
     users:              Array<UserType>
+    searchFilter:       UsersFilterType
     onPageChanged:      (page: number) => void
+    onFilterChanged:    (filter: UsersFilterType) => void
     followUser:         followUser
     unfollowUser:       unfollowUser
 }
@@ -24,6 +28,10 @@ const Users: React.FC<UsersPropsType> = props => {
             currentPage={props.currentPage}
             onPageChanged={props.onPageChanged}
             portionSize={10}
+        />
+        <UserSearchForm
+            onFilterChanged={props.onFilterChanged}
+            searchFilter={props.searchFilter}
         />
         {props.users.map(user =>
             <User

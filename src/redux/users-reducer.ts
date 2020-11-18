@@ -8,9 +8,14 @@ let initialState = {
     pageSize:           10,
     totalUsersCount:    0,
     currentPage:        1,
-    isFetching:         false
+    isFetching:         false,
+    filter: {
+        term:       '',
+        friends:    undefined as boolean | undefined
+    }
 }
 export type UsersStateType = typeof initialState
+export type UsersFilterType = typeof initialState.filter
 type ActionsType = ActionTypes<typeof actions>
 
 const usersReducer = (
@@ -77,6 +82,11 @@ const usersReducer = (
                     return user
                 })
             }
+        case 'SET_USERS_FILTER':
+            return {
+                ...state,
+                filter: action.payload
+            }
         default:
             return state
     }
@@ -89,18 +99,21 @@ const actions = {
     setCurrentPage: (page: number) => ({ type: 'SET_CURRENT_PAGE', page } as const),
     setUsers: (users: Array<UserType>) => ({ type: 'SET_USERS', users } as const),
     setUsersTotalCount: (count: number) => ({ type: 'SET_USERS_TOTAL_COUNT', count } as const),
-    toggleIsFetching: () => ({ type: 'TOGGLE_IS_FETCHING' } as const)
+    toggleIsFetching: () => ({ type: 'TOGGLE_IS_FETCHING' } as const),
+    setUsersFilter: (filter: UsersFilterType) => ({ type: 'SET_USERS_FILTER', payload: filter } as const)
 }
 export { actions as usersActions }
 export const getUsersList = (
-    currentPage: number,
-    pageSize: number
+    currentPage:    number,
+    pageSize:       number,
+    filter:         UsersFilterType
 ): ThunkType<ActionsType> => {
     return async (dispatch) => {
         try {
             dispatch(actions.toggleIsFetching())
             dispatch(actions.setCurrentPage(currentPage))
-            const data = await UserAPI.getUsers(currentPage, pageSize)
+            dispatch(actions.setUsersFilter(filter))
+            const data = await UserAPI.getUsers(currentPage, pageSize, filter.term, filter.friends)
             dispatch(actions.toggleIsFetching())
             dispatch(actions.setUsers(data.items))
             dispatch(actions.setUsersTotalCount(data.totalCount))
