@@ -11,4 +11,4 @@ export const getPageSize = (state: RootStateType): number => state.usersReducer.
 export const getTotalUsersCount = (state: RootStateType): number => state.usersReducer.totalUsersCount
 export const getCurrentPage = (state: RootStateType): number => state.usersReducer.currentPage
 export const getIsFetching = (state: RootStateType): boolean => state.usersReducer.isFetching
-export const getFilters = (state: RootStateType) => state.usersReducer.filter
+export const getFilter = (state: RootStateType) => state.usersReducer.filter
