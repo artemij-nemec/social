@@ -1,5 +1,7 @@
+import * as queryString from 'querystring'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { RootStateType } from '../../redux/redux-store'
 import { followUser, getUsersList, unfollowUser, UsersFilterType } from '../../redux/users-reducer'
 import { getCurrentPage, getFilter, getPageSize, getTotalUsersCount, getUsersSelector } from '../../redux/users-selectors'
@@ -15,14 +17,42 @@ const Users: React.FC = props => {
     const currentPage = useSelector(getCurrentPage)
     const filter = useSelector(getFilter)
     const isAuth = useSelector((state: RootStateType) => state.authReducer.isAuth)
+    const history = useHistory()
 
     const dispatch = useDispatch()
 
     useEffect(
         () => {
-            dispatch(getUsersList(currentPage, pageSize, filter))
+            const searchQuery = history.location.search.substr(1)
+            const parsedSearch = queryString.parse(searchQuery)
+            const page = parsedSearch.page ? Number(parsedSearch.page) : currentPage
+            const actualFilter = {
+                term: parsedSearch.term ? parsedSearch.term as string : filter.term,
+                friends: !parsedSearch.friends ? filter.friends : parsedSearch.friends === 'true' ? true : false
+            }
+            dispatch(getUsersList(page, pageSize, actualFilter))
         },
         []
+    )
+    useEffect(
+        () => {
+            let search = { page: currentPage } as {
+                page:       number
+                term?:      string
+                friends?:   boolean
+            }
+            if (!!filter.term) {
+                search.term = filter.term
+            }
+            if (typeof filter.friends !== 'undefined') {
+                search.friends = filter.friends
+            }
+            history.push({
+                pathname: '/users',
+                search: queryString.stringify(search)
+            })
+        },
+        [filter, currentPage]
     )
 
     const onPageChanged = (page: number) => {
@@ -51,7 +81,6 @@ const Users: React.FC = props => {
         />
         <UserSearchForm
             onFilterChanged={onFilterChanged}
-            searchFilter={filter}
         />
         {users.map(user =>
             <User

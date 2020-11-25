@@ -1,10 +1,11 @@
 import { Field, Form, Formik } from 'formik';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { UsersFilterType } from '../../redux/users-reducer';
+import { getFilter } from '../../redux/users-selectors';
 
 type PropsType = {
-    searchFilter:       UsersFilterType
-    onFilterChanged:    (filter: UsersFilterType) => void
+    onFilterChanged: (filter: UsersFilterType) => void
 }
 enum FriendsVal {
     FindAll     = 'Find all',
@@ -15,7 +16,7 @@ type FormType = {
     term:       string
     friends:    FriendsVal
 }
-export const UserSearchForm: React.FC<PropsType> = ({ searchFilter, onFilterChanged }) => {
+export const UserSearchForm: React.FC<PropsType> = ({ onFilterChanged }) => {
     const userSearchFormValidate = (values: FormType) => {
         const errors = {}
         return errors
@@ -31,12 +32,14 @@ export const UserSearchForm: React.FC<PropsType> = ({ searchFilter, onFilterChan
         onFilterChanged(filter)
         setSubmitting(false)
     }
-    let friends = searchFilter.friends === true
+    const filter = useSelector(getFilter)
+    let friends = filter.friends === true
             ? FriendsVal.Friends
-            : searchFilter.friends === false ? FriendsVal.NotFriends : FriendsVal.FindAll
+            : filter.friends === false ? FriendsVal.NotFriends : FriendsVal.FindAll
     return <div>
         <Formik
-            initialValues={{ term: searchFilter.term, friends}}
+            enableReinitialize={true}
+            initialValues={{ term: filter.term, friends}}
             validate={userSearchFormValidate}
             onSubmit={userSearchFormOnSubmit}
         >

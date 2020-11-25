@@ -1,31 +1,23 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import defaultAvatar from '../../../assets/images/default_mini_avatar.jpg'
-import { ContactsType, ProfileType, SaveProfileType, UpdateStatusType, UploadProfilePhotoType } from '../../../types/types'
+import { saveProfile } from '../../../redux/profile-reducer'
+import { ContactsType, ProfileType } from '../../../types/types'
 import ProfileData from './ProfileData'
 import { ProfileDataReduxForm } from './ProfileDataForm'
 import s from './ProfileInfo.module.css'
 import ProfileStatus from './ProfileStatus'
 
 type PropsType = {
-    status:             string
-    profile:            ProfileType
-    isOwner:            boolean
-    updateStatus:       UpdateStatusType
-    uploadProfilePhoto: UploadProfilePhotoType
-    saveProfile:        SaveProfileType
+    profile:    ProfileType
+    isOwner:    boolean
 }
-const ProfileInfo: React.FC<PropsType> = ({
-    profile,
-    status,
-    updateStatus,
-    isOwner,
-    uploadProfilePhoto,
-    saveProfile
-}) => {
+const ProfileInfo: React.FC<PropsType> = ({ profile, isOwner }) => {
     let [editMode, setEditMode] = useState(false)
     const enableEditMode = () => setEditMode(true)
+    const dispatch = useDispatch()
     const onSubmit = async (profileData: ProfileType) => {
-        await saveProfile(profileData)
+        await dispatch(saveProfile(profileData))
         setEditMode(false)
     }
     return <div>
@@ -38,17 +30,13 @@ const ProfileInfo: React.FC<PropsType> = ({
                 contacts={profile.contacts}
                 initialValues={profile}
                 onSubmit={onSubmit}
-                uploadProfilePhoto={uploadProfilePhoto}
                 isOwner={isOwner} />
             : <ProfileData
                 profile={profile}
                 enableEditMode={enableEditMode}
                 isOwner={isOwner} />
         }
-        <ProfileStatus
-            status={status}
-            updateStatus={updateStatus}
-        />
+        <ProfileStatus isOwner={isOwner} />
     </div>
 }
 

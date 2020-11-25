@@ -1,68 +1,36 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { compose } from 'redux';
-import { saveProfile, setUser, updateStatus, uploadProfilePhoto } from '../../redux/profile-reducer';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { setUser } from '../../redux/profile-reducer';
 import { RootStateType } from '../../redux/redux-store';
-import { SaveProfileType, SetUserType, UpdateStatusType, UploadProfilePhotoType } from '../../types/types';
 import Profile from './Profile';
 
-type PathParamsType = {
-    userId: string
-}
-interface PropsType extends RouteComponentProps<PathParamsType> {
-    authorizedUserId:   number
-    setUser:            SetUserType
-}
-type MapStateToPropsType = ReturnType<typeof mapStateToProps>
-type MapDispatchToPropsType = {
-    setUser:            SetUserType
-    updateStatus:       UpdateStatusType
-    uploadProfilePhoto: UploadProfilePhotoType
-    saveProfile:        SaveProfileType
-}
-class ProfileContainerAPI extends Component<PropsType & MapStateToPropsType & MapDispatchToPropsType> {
-    updateProfile() {
-        let { match, authorizedUserId, history, setUser } = this.props
-        let userId = Number(match.params.userId)
-        if (!userId) {
-            userId = authorizedUserId
+const ProfileContainer: React.FC = () =>  {
+    const authorizedUserId = useSelector((state: RootStateType) => state.authReducer.userId)
+    type ParamsType = {
+        userId: string
+    }
+    const params = useParams<ParamsType>()
+    const history = useHistory()
+    const dispatch = useDispatch()
+
+    useEffect(
+        () => {
+            let userId = Number(params.userId) as number | null
             if (!userId) {
-                history.push("/login")
+                userId = authorizedUserId
+                if (!userId) {
+                    history.push("/login")
+                }
             }
-        }
-        if (userId) {
-            setUser(userId)
-        }
-    }
-    componentDidMount() {
-        this.updateProfile()
-    }
-
-    componentDidUpdate(prevProps: PropsType) {
-        if(this.props.match.params.userId !== prevProps.match.params.userId) {
-            this.updateProfile()
-        }
-    }
-
-    render() {
-        return <Profile {...this.props} isOwner={!this.props.match.params.userId} />
-    }
-}
-
-let mapStateToProps = (state: RootStateType) => {
-    return {
-        profile: state.profileReducer.profile,
-        status: state.profileReducer.status,
-        authorizedUserId: state.authReducer.userId,
-        isAuth: state.authReducer.isAuth
-    }
-}
-export default compose<React.ComponentType>(
-    withRouter,
-    // withAuthRedirect,
-    connect(
-        mapStateToProps,
-        { setUser, updateStatus, uploadProfilePhoto, saveProfile }
+            if (userId) {
+                dispatch(setUser(userId))
+            }
+        },
+        [ params.userId ]
     )
-)(ProfileContainerAPI)
+
+    return <Profile isOwner={!params.userId} />
+}
+
+export default ProfileContainer

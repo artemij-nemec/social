@@ -1,13 +1,14 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Field, InjectedFormProps, reduxForm } from 'redux-form'
-import { ContactsType, ProfileType, UploadProfilePhotoType } from '../../../types/types'
+import { uploadProfilePhoto } from '../../../redux/profile-reducer'
+import { ContactsType, ProfileType } from '../../../types/types'
 import { Input, TextArea } from '../../Common/FormControls/FormControls'
 import s from './ProfileInfo.module.css'
 
 type OwnPropsType = {
     contacts:           ContactsType
     isOwner:            boolean
-    uploadProfilePhoto: UploadProfilePhotoType
 }
 type FormType = ProfileType
 
@@ -15,14 +16,14 @@ const ProfileDataForm: React.FC<OwnPropsType &
     InjectedFormProps<FormType, OwnPropsType>
 > = ({
     contacts,
-    uploadProfilePhoto,
     isOwner,
     handleSubmit,
     error
 }) => {
+    const dispatch = useDispatch()
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.length) {
-            uploadProfilePhoto(e.target.files[0])
+            dispatch(uploadProfilePhoto(e.target.files[0]))
         }
     }
 
