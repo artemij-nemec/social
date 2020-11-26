@@ -59,6 +59,11 @@ const usersReducer = (
                 ...state,
                 currentPage: action.page
             }
+        case 'SET_PAGE_SIZE':
+            return {
+                ...state,
+                pageSize: action.pageSize
+            }
         case 'SET_USERS_TOTAL_COUNT':
             return {
                 ...state,
@@ -97,6 +102,7 @@ const actions = {
     unfollow: (userId: number) => ({ type: 'UNFOLLOW', userId } as const),
     toggleFollowingProgress: (userId: number, state: boolean) => ({ type: 'TOGGLE_FOLLOWING_PROGRESS', userId, state } as const),
     setCurrentPage: (page: number) => ({ type: 'SET_CURRENT_PAGE', page } as const),
+    setPageSize: (pageSize: number) => ({ type: 'SET_PAGE_SIZE', pageSize } as const),
     setUsers: (users: Array<UserType>) => ({ type: 'SET_USERS', users } as const),
     setUsersTotalCount: (count: number) => ({ type: 'SET_USERS_TOTAL_COUNT', count } as const),
     toggleIsFetching: () => ({ type: 'TOGGLE_IS_FETCHING' } as const),

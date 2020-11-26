@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Field, InjectedFormProps, reduxForm } from 'redux-form'
 import { login } from '../../redux/auth-reducer'
-import { RootStateType } from '../../redux/redux-store'
+import { getCaptchaUrl, getIsAuth } from '../../redux/auth-selectors'
 import { maxLengthCreator, required } from '../../utils/validators/validators'
 import { Input } from '../Common/FormControls/FormControls'
 import s from './Login.module.css'
@@ -88,8 +88,8 @@ const LoginReduxForm = reduxForm<LoginFormType, OwnPropsType>({
 
 ///Login
 export const Login: React.FC = () => {
-    const isAuth = useSelector((state: RootStateType) => state.authReducer.isAuth)
-    const captchaUrl = useSelector((state: RootStateType) => state.authReducer.captchaUrl)
+    const isAuth = useSelector(getIsAuth)
+    const captchaUrl = useSelector(getCaptchaUrl)
     const dispatch = useDispatch()
 
     const submit = (formData: LoginFormType) => {

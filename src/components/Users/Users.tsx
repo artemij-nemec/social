@@ -2,21 +2,21 @@ import * as queryString from 'querystring'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { RootStateType } from '../../redux/redux-store'
-import { followUser, getUsersList, unfollowUser, UsersFilterType } from '../../redux/users-reducer'
+import { getIsAuth } from '../../redux/auth-selectors'
+import { followUser, getUsersList, unfollowUser, usersActions, UsersFilterType } from '../../redux/users-reducer'
 import { getCurrentPage, getFilter, getPageSize, getTotalUsersCount, getUsersSelector } from '../../redux/users-selectors'
-import Paginator from '../Common/Paginator/Paginator'
+import Paginator, { PaginatorOnPageChangeType, PaginatorOnShowSizeChange } from '../Common/Paginator/Paginator'
 import User from './User'
 import s from './Users.module.css'
 import { UserSearchForm } from './UserSearchForm'
 
-const Users: React.FC = props => {
+const Users: React.FC = () => {
     const users = useSelector(getUsersSelector)
     const totalUsersCount = useSelector(getTotalUsersCount)
-    const pageSize = useSelector(getPageSize)
+    const storedPageSize = useSelector(getPageSize)
     const currentPage = useSelector(getCurrentPage)
     const filter = useSelector(getFilter)
-    const isAuth = useSelector((state: RootStateType) => state.authReducer.isAuth)
+    const isAuth = useSelector(getIsAuth)
     const history = useHistory()
 
     const dispatch = useDispatch()
@@ -30,7 +30,7 @@ const Users: React.FC = props => {
                 term: parsedSearch.term ? parsedSearch.term as string : filter.term,
                 friends: !parsedSearch.friends ? filter.friends : parsedSearch.friends === 'true' ? true : false
             }
-            dispatch(getUsersList(page, pageSize, actualFilter))
+            dispatch(getUsersList(page, storedPageSize, actualFilter))
         },
         []
     )
@@ -52,16 +52,22 @@ const Users: React.FC = props => {
                 search: queryString.stringify(search)
             })
         },
-        [filter, currentPage]
+        [filter, currentPage, history]
     )
 
-    const onPageChanged = (page: number) => {
+    const onPageChanged: PaginatorOnPageChangeType = (page, pageSize) => {
         if (page !== currentPage) {
-            dispatch(getUsersList(page, pageSize, filter))
+            dispatch(getUsersList(page, pageSize ? pageSize : storedPageSize, filter))
+        }
+    }
+    const onShowSizeChange: PaginatorOnShowSizeChange = (current, size) => {
+        if (size !== storedPageSize) {
+            dispatch(usersActions.setPageSize(size))
+            dispatch(getUsersList(current, size, filter))
         }
     }
     const onFilterChanged = (filter: UsersFilterType) => {
-        dispatch(getUsersList(1, pageSize, filter))
+        dispatch(getUsersList(1, storedPageSize, filter))
     }
     const follow = (id: number) => {
         dispatch(followUser(id))
@@ -72,15 +78,15 @@ const Users: React.FC = props => {
 
     return <div>
         <h2 className={s.header}>Users</h2>
-        <Paginator
-            totalItemsCount={totalUsersCount}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            onPageChanged={onPageChanged}
-            portionSize={10}
-        />
         <UserSearchForm
             onFilterChanged={onFilterChanged}
+        />
+        <Paginator
+            totalItemsCount={totalUsersCount}
+            pageSize={storedPageSize}
+            currentPage={currentPage}
+            onPageChanged={onPageChanged}
+            onShowSizeChange={onShowSizeChange}
         />
         {users.map(user =>
             <User

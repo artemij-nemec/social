@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import { getAuthorizedUserId } from '../../redux/auth-selectors';
 import { setUser } from '../../redux/profile-reducer';
-import { RootStateType } from '../../redux/redux-store';
 import Profile from './Profile';
 
 const ProfileContainer: React.FC = () =>  {
-    const authorizedUserId = useSelector((state: RootStateType) => state.authReducer.userId)
+    const authorizedUserId = useSelector(getAuthorizedUserId)
     type ParamsType = {
         userId: string
     }
