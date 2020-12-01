@@ -7,8 +7,9 @@
     left: 0;
     top: 0;
     text-align: center;
+    z-index: 99999999;
 }
-.preloaderImage {
-    width: 200px;
-    margin-top: 200px;
+.preloaderSpinner {
+    margin-top: 250px;
+    z-index: 10;
 }

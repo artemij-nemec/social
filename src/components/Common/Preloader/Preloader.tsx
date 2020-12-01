@@ -1,10 +1,10 @@
 import React from 'react'
 import s from './Preloader.module.css'
-import loadingImg from '../../../assets/images/loading.svg'
+import { Spin } from 'antd'
 
 const Preloader: React.FC = () => {
     return <div className={s.preloaderContainer}>
-        <img src={loadingImg} alt='Loading...' className={s.preloaderImage} />
+        <Spin tip="Loading..." size="large" className={s.preloaderSpinner} />
     </div>
 }
 

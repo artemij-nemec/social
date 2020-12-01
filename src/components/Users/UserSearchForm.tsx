@@ -1,5 +1,5 @@
-import { Field, Form, Formik } from 'formik';
-import React from 'react';
+import { Button, Form, Input, Select } from 'antd';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { UsersFilterType } from '../../redux/users-reducer';
 import { getFilter } from '../../redux/users-selectors';
@@ -8,20 +8,22 @@ type PropsType = {
     onFilterChanged: (filter: UsersFilterType) => void
 }
 enum FriendsVal {
-    FindAll     = 'Find all',
-    Friends     = 'Friends',
-    NotFriends  = 'Not friends'
+    FindAll = 'Find all',
+    Friends = 'Friends',
+    NotFriends = 'Not friends'
 }
 type FormType = {
-    term:       string
-    friends:    FriendsVal
+    term: string
+    friends: FriendsVal
 }
 export const UserSearchForm: React.FC<PropsType> = ({ onFilterChanged }) => {
-    const userSearchFormValidate = (values: FormType) => {
-        const errors = {}
-        return errors
-    }
-    const userSearchFormOnSubmit = (values: FormType, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
+    const { Option } = Select
+    const [form] = Form.useForm()
+    const filter = useSelector(getFilter)
+    let friends = filter.friends === true
+        ? FriendsVal.Friends
+        : filter.friends === false ? FriendsVal.NotFriends : FriendsVal.FindAll
+    const onFinish = (values: FormType) => {
         let friends = values.friends === FriendsVal.FindAll
             ? undefined
             : values.friends === FriendsVal.Friends ? true : false
@@ -30,32 +32,55 @@ export const UserSearchForm: React.FC<PropsType> = ({ onFilterChanged }) => {
             friends
         }
         onFilterChanged(filter)
-        setSubmitting(false)
     }
-    const filter = useSelector(getFilter)
-    let friends = filter.friends === true
-            ? FriendsVal.Friends
-            : filter.friends === false ? FriendsVal.NotFriends : FriendsVal.FindAll
-    return <div>
-        <Formik
-            enableReinitialize={true}
-            initialValues={{ term: filter.term, friends}}
-            validate={userSearchFormValidate}
-            onSubmit={userSearchFormOnSubmit}
+    const onReset = () => {
+        form.setFieldsValue({ term: '', friends: FriendsVal.FindAll })
+        form.submit()
+    }
+
+    useEffect(
+        () => {
+            form.setFieldsValue({ term: filter.term, friends })
+        },
+        [ filter ]
+    )
+
+    return <Form
+        form={form}
+        initialValues={{ term: filter.term || '', friends:  friends || FriendsVal.FindAll }}
+        onFinish={onFinish}
+    >
+        <Form.Item
+            name="term"
+            style={{ display: "inline-block", marginRight: '10px', width: 200 }}
         >
-            {({ isSubmitting }) => (
-                <Form>
-                    <Field type="text" name="term" />
-                    <Field name="friends" as="select">
-                        <option value={FriendsVal.FindAll}>Find all</option>
-                        <option value={FriendsVal.Friends}>Friends</option>
-                        <option value={FriendsVal.NotFriends}>Not friends</option>
-                    </Field>
-                    <button type="submit" disabled={isSubmitting}>
-                        Find
-                    </button>
-                </Form>
-            )}
-        </Formik>
-    </div>
+            <Input
+                value={filter.term}
+                placeholder="Search"
+            />
+        </Form.Item>
+        <Form.Item
+            name="friends"
+            style={{ display: "inline-block", marginRight: '10px', width: 200 }}
+        >
+            <Select value={friends}>
+                <Option value={FriendsVal.FindAll}>Find all</Option>
+                <Option value={FriendsVal.Friends}>Friends</Option>
+                <Option value={FriendsVal.NotFriends}>Not friends</Option>
+            </Select>
+        </Form.Item>
+        <Form.Item style={{ display: "inline-block", marginRight: '10px' }}>
+            <Button
+                type="primary"
+                htmlType="submit"
+            >
+                Find
+            </Button>
+        </Form.Item>
+        <Form.Item style={{ display: "inline-block" }}>
+            <Button htmlType="button" onClick={onReset}>
+                Clear
+            </Button>
+        </Form.Item>
+    </Form>
 }

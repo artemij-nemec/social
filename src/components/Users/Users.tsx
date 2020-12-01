@@ -1,3 +1,4 @@
+import { Pagination } from 'antd'
 import * as queryString from 'querystring'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -5,7 +6,6 @@ import { useHistory } from 'react-router-dom'
 import { getIsAuth } from '../../redux/auth-selectors'
 import { followUser, getUsersList, unfollowUser, usersActions, UsersFilterType } from '../../redux/users-reducer'
 import { getCurrentPage, getFilter, getPageSize, getTotalUsersCount, getUsersSelector } from '../../redux/users-selectors'
-import Paginator, { PaginatorOnPageChangeType, PaginatorOnShowSizeChange } from '../Common/Paginator/Paginator'
 import User from './User'
 import s from './Users.module.css'
 import { UserSearchForm } from './UserSearchForm'
@@ -52,15 +52,15 @@ const Users: React.FC = () => {
                 search: queryString.stringify(search)
             })
         },
-        [filter, currentPage, history]
+        [ filter ]
     )
 
-    const onPageChanged: PaginatorOnPageChangeType = (page, pageSize) => {
+    const onPageChanged = (page: number, pageSize?: number | undefined) => {
         if (page !== currentPage) {
             dispatch(getUsersList(page, pageSize ? pageSize : storedPageSize, filter))
         }
     }
-    const onShowSizeChange: PaginatorOnShowSizeChange = (current, size) => {
+    const onShowSizeChange = (current: number, size: number) => {
         if (size !== storedPageSize) {
             dispatch(usersActions.setPageSize(size))
             dispatch(getUsersList(current, size, filter))
@@ -81,11 +81,11 @@ const Users: React.FC = () => {
         <UserSearchForm
             onFilterChanged={onFilterChanged}
         />
-        <Paginator
-            totalItemsCount={totalUsersCount}
-            pageSize={storedPageSize}
-            currentPage={currentPage}
-            onPageChanged={onPageChanged}
+        <Pagination
+            current={currentPage}
+            total={totalUsersCount}
+            hideOnSinglePage={true}
+            onChange={onPageChanged}
             onShowSizeChange={onShowSizeChange}
         />
         {users.map(user =>
