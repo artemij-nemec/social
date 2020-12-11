@@ -1,0 +1,9 @@
+.container {
+    position: absolute;
+    left: 50%;
+    margin-left: -150px;
+}
+.alert {
+    width: 300px;
+    margin: 1px 0;
+}

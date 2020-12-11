@@ -7,6 +7,7 @@ import dialogsReducer from "./dialogs-reducer"
 import navbarReducer from "./navbar-reducer"
 import profileReducer from "./profile-reducer"
 import usersReducer from "./users-reducer"
+import alertsReducer from "./alerts-reducer"
 
 let reducers = combineReducers({
     profileReducer,
@@ -15,6 +16,7 @@ let reducers = combineReducers({
     usersReducer,
     authReducer,
     appReducer,
+    alertsReducer,
     form: formReducer
 })
 // @ts-ignore

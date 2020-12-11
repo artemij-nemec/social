@@ -1,97 +1,103 @@
+import { UploadOutlined } from '@ant-design/icons'
+import { Button, Checkbox, Form, Input, Upload } from 'antd'
 import React from 'react'
-import { useDispatch } from 'react-redux'
-import { Field, InjectedFormProps, reduxForm } from 'redux-form'
+import { useDispatch, useSelector } from 'react-redux'
 import { uploadProfilePhoto } from '../../../redux/profile-reducer'
+import { RootStateType } from '../../../redux/redux-store'
 import { ContactsType, ProfileType } from '../../../types/types'
-import { Input, TextArea } from '../../Common/FormControls/FormControls'
 import s from './ProfileInfo.module.css'
 
 type OwnPropsType = {
-    contacts:           ContactsType
-    isOwner:            boolean
+    contacts:       ContactsType
+    isOwner:        boolean
+    initialValues:  ProfileType
+    onSubmit:       (profileData: ProfileType) => void
 }
-type FormType = ProfileType
+const layout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 20 },
+}
+const tailLayout = {
+    wrapperCol: { offset: 4, span: 16 }
+}
 
-const ProfileDataForm: React.FC<OwnPropsType &
-    InjectedFormProps<FormType, OwnPropsType>
-> = ({
+export const ProfileDataForm: React.FC<OwnPropsType> = ({
     contacts,
     isOwner,
-    handleSubmit,
-    error
+    initialValues,
+    onSubmit
 }) => {
     const dispatch = useDispatch()
-    const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.length) {
-            dispatch(uploadProfilePhoto(e.target.files[0]))
+    const isUpdating = useSelector((state: RootStateType) => state.profileReducer.isUpdating)
+    const beforeUpload = (file: File) => {
+        return false
+      }
+    const onChange = (info: any) => {
+        if (info.file.status !== 'uploading') {
+          dispatch(uploadProfilePhoto(info.file))
         }
-    }
+      }
 
-    return <form onSubmit={handleSubmit} className={s.loginForm}>
-        {isOwner && <div><button type="submit" className={s.loginButton}>Save changes</button></div>}
-        <div>
-            <input type="file" onChange={onFileSelected} />
+    return <Form
+        {...layout}
+        name="profile-form"
+        initialValues={initialValues}
+        onFinish={onSubmit}
+    >
+        <div className={s.uploadButtonContainer}>
+            <Upload
+                name="file"
+                beforeUpload={beforeUpload}
+                onChange={onChange}
+                showUploadList={false}
+            >
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
         </div>
-        {error &&
-            <div className={s.formError}>
-                {error}
-            </div>
-        }
-        <div><b>Full name: </b>
-            <Field
-                name="fullName"
-                component={Input}
-                validate={[]}
-                type="text"
-                placeholder="Full name"
-            />
-        </div>
-        <div><b>About me: </b>
-            <Field
-                name="aboutMe"
-                component={Input}
-                validate={[]}
-                type="text"
-                placeholder="About me"
-            />
-        </div>
-        <div>
-            <b>Looking for a job: </b>
-            <div>
-                <Field
-                    name="lookingForAJob"
-                    component="input"
-                    type="checkbox"
-                />
-                <label htmlFor="lookingForAJob">Looking for a job</label>
-            </div>
-            <div className={s.paddingLeft10px}>
-                <b>Description: </b>
-                <Field
-                    name="lookingForAJobDescription"
-                    component={TextArea}
-                    validate={[]}
-                    type="text"
-                    placeholder="Description"
-                />
-            </div>
-        </div>
-        <b>Contacts: </b>
+        {isOwner && <div className={s.editButtonContainer}>
+            <Button
+                type="primary"
+                htmlType="submit"
+                disabled={isUpdating}
+            >Save changes</Button>
+        </div>}
+        <Form.Item
+            label="Full name"
+            name="fullName"
+        >
+            <Input />
+        </Form.Item>
+        <Form.Item
+            label="About me"
+            name="aboutMe"
+        >
+            <Input />
+        </Form.Item>
+        <Form.Item
+            {...tailLayout}
+            name="lookingForAJob"
+            valuePropName="checked"
+        >
+            <Checkbox defaultChecked={false}>Looking for a job</Checkbox>
+        </Form.Item>
+        <Form.Item
+            label="Description"
+            name="lookingForAJobDescription"
+            className={s.description}
+        >
+            <Input.TextArea rows={4} />
+        </Form.Item>
+        <b>Contacts</b>
         {Object.keys(contacts).map(contactKey => <div
                 key={contactKey}
                 className={s.paddingLeft10px}>
-                <b>{contactKey}: </b>
-                <Field
-                    name={"contacts." + contactKey}
-                    component={Input}
-                    validate={[]}
-                    type="text"
-                />
+                <Form.Item
+                    label={contactKey}
+                    name={["contacts", contactKey]}
+                >
+                    <Input />
+                </Form.Item>
             </div>
         )}
-    </form>
+    </Form>
 }
-
-export const ProfileDataReduxForm = reduxForm<FormType, OwnPropsType>({
-    form: 'edit-profile'
-})(ProfileDataForm)

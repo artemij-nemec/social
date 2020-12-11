@@ -4,3 +4,23 @@
 .formError {
     border: 1px solid red;
 }
+.editButtonContainer {
+    margin: 5px 0;
+    text-align: right;
+}
+.uploadButtonContainer {
+    margin: 5px 0;
+    text-align: center;
+}
+.profileContainer {
+    border-radius: 2px;
+    padding: 10px;
+    background-color: #fff;
+    min-height: 600px;
+}
+.profileDataContainer {
+    padding-left: 10px;
+}
+.imgContainer {
+    text-align: center;
+}

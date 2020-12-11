@@ -1,7 +1,7 @@
-import { FormAction, stopSubmit } from "redux-form"
 import { ResponseCodes, ResponseCodesCaptcha } from "../api/api"
 import { AuthAPI } from "../api/auth-api"
 import { SecurityAPI } from "../api/security-api"
+import { AlertActionsType, alertsActions } from "./alerts-reducer"
 import { ActionTypes, ThunkType } from "./redux-store"
 
 let initialState = {
@@ -61,12 +61,13 @@ export type LoginType = (
     password: string,
     rememberMe: boolean,
     captcha: string
-) => ThunkType<ActionsType | FormAction>
+) => ThunkType<ActionsType | AlertActionsType>
 export const login: LoginType = (email, password, rememberMe, captcha) => {
     return async dispatch => {
         try {
             const data = await AuthAPI.login(email, password, rememberMe, captcha)
             if (data.resultCode === ResponseCodes.Success) {
+                dispatch(alertsActions.addSuccessAllert("Authorized successfully"))
                 dispatch(authMe())
             } else {
                 if (data.resultCode === ResponseCodesCaptcha.CaptchaRequired) {
@@ -75,14 +76,14 @@ export const login: LoginType = (email, password, rememberMe, captcha) => {
                 let message = data.messages.length > 0 && data.messages[0]
                     ? data.messages[0]
                     : "Unknown error"
-                    dispatch(stopSubmit('login', { _error: message }))
+                    dispatch(alertsActions.addErrorAllert(message))
             }
         } catch (error) {
             console.log(error)
         }
     }
 }
-export type LogoutType = () => ThunkType<ActionsType>
+export type LogoutType = () => ThunkType<ActionsType | AlertActionsType>
 export const logout: LogoutType = () => {
     return async dispatch => {
         try {
@@ -91,17 +92,17 @@ export const logout: LogoutType = () => {
                 dispatch(actions.setUserData(null, null, null, false))
             }
         } catch (error) {
-            console.log(error)
+            dispatch(alertsActions.addErrorAllert(error))
         }
     }
 }
-export const getCaptchaUrl = (): ThunkType<ActionsType> => {
+export const getCaptchaUrl = (): ThunkType<ActionsType | AlertActionsType> => {
     return async dispatch => {
         try {
             const url = await SecurityAPI.getCaptchaUrl()
             dispatch(actions.setCaptchaUrl(url))
         } catch (error) {
-            console.log(error)
+            dispatch(alertsActions.addErrorAllert(error))
         }
     }
 }

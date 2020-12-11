@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import React from 'react';
 import { ProfileType } from '../../../types/types';
 import { Contacts } from './ProfileInfo';
@@ -10,7 +11,7 @@ type PropsType = {
 }
 const ProfileData: React.FC<PropsType> = ({ profile, enableEditMode, isOwner }) => {
     return <div>
-        {isOwner && <div><button onClick={enableEditMode}>Edit profile</button></div>}
+        {isOwner && <div className={s.editButtonContainer}><Button onClick={enableEditMode}>Edit profile</Button></div>}
         <div><b>Full name: </b>{profile.fullName}</div>
         <div><b>About me: </b>{profile.aboutMe}</div>
         <div>

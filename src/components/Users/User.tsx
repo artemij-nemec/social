@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import defaultAvatar from '../../assets/images/default_mini_avatar.jpg'
@@ -36,23 +37,25 @@ const User: React.FC<PropsType> = ({
             </span>
             <div>
                 {followed ?
-                    <button
+                    <Button
+                        type="default"
                         onClick={() => {
                             unfollowUser(id)
                         }}
                         disabled={followingInProgress || !isAuth}
                     >
                         Unfollow
-                    </button>
+                    </Button>
                     :
-                    <button
+                    <Button
+                        type="default"
                         onClick={() => {
                             followUser(id)
                         }}
                         disabled={followingInProgress || !isAuth}
                     >
                         Follow
-                    </button>
+                    </Button>
                 }
             </div>
         </span>

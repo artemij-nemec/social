@@ -1,7 +1,7 @@
-import { FormAction, stopSubmit } from "redux-form"
 import { ResponseCodes } from "../api/api"
 import { ProfileAPI } from "../api/profile-api"
-import { ContactsType, PhotosType, PostType, ProfileType, SetUserType } from "../types/types"
+import { PhotosType, PostType, ProfileType, SetUserType } from "../types/types"
+import { AlertActionsType, alertsActions } from "./alerts-reducer"
 import { ActionTypes, ThunkType } from "./redux-store"
 
 type ActionsType = ActionTypes<typeof actions>
@@ -13,6 +13,7 @@ let initialState = {
         { id: 3, message: 'Messs 3' },
     ] as Array<PostType>,
     profile: null as null | ProfileType,
+    isUpdating: false,
     status: ''
 }
 export type ProfileStateType = typeof initialState
@@ -53,12 +54,16 @@ const profileReducer = (
                 ...state,
                 posts: state.posts.filter(post => post.id !== action.postID)
             }
+        case 'CHANGE_UPDATING_STATUS':
+            return {
+                ...state,
+                isUpdating: action.isUpdating
+            }
         default:
             return state
     }
 }
-
-export const actions = {
+const actions = {
     setUserProfile: (profile: ProfileType | null) => ({
         type: 'SET_USER_PROFILE',
         profile
@@ -78,9 +83,13 @@ export const actions = {
     deletePost: (postID: number) => ({
         type: 'DELETE_POST',
         postID
+    } as const),
+    setUpdating: (isUpdating: boolean) => ({
+        type: 'CHANGE_UPDATING_STATUS',
+        isUpdating
     } as const)
 }
-
+export { actions as profileActions }
 export const setUser: SetUserType = (userId: number): ThunkType<ActionsType> => {
     return async dispatch => {
         try {
@@ -111,14 +120,14 @@ export const uploadProfilePhoto = (photo: File): ThunkType<ActionsType> => {
         try {
             const data = await ProfileAPI.uploadProfilePhoto(photo)
             if (data.resultCode === ResponseCodes.Success) {
-                dispatch(actions.setProfilePhoto(data.data))
+                dispatch(actions.setProfilePhoto(data.data.photos))
             }
         } catch (error) {
             console.log(error)
         }
     }
 }
-export const saveProfile = (profileData: ProfileType): ThunkType<ActionsType | FormAction> => {
+export const saveProfile = (profileData: ProfileType): ThunkType<ActionsType | AlertActionsType> => {
     return async (dispatch, getState) => {
         try {
             const userId = getState().authReducer.userId
@@ -126,33 +135,18 @@ export const saveProfile = (profileData: ProfileType): ThunkType<ActionsType | F
             if (response.resultCode === ResponseCodes.Success
                 && userId !== null
             ) {
-                dispatch(actions.setUserProfile(profileData))
+                const newProfileData = await ProfileAPI.getProfile(userId)
+                dispatch(actions.setUserProfile(newProfileData))
             } else {
                 const message = response.messages.length > 0 && response.messages[0]
                     ? response.messages[0]
                     : "Unknown error"
-                const errors = getErrorObjectFromMessage(message)
-                dispatch(stopSubmit('edit-profile', errors))
+                dispatch(alertsActions.addErrorAllert(message))
                 return Promise.reject(message)
             }
         } catch (error) {
             console.log(error)
         }
-    }
-}
-
-type ErrorMessageType = { _error: string } | { contacts: ContactsType }
-const getErrorObjectFromMessage = (message: string): ErrorMessageType => {
-    const contacts = message.match(/\(Contacts->(.*)\)/)
-    if (contacts && contacts[1]) {
-        const contactField = contacts[1].toLowerCase()
-        return {
-            contacts: {
-                [contactField]: message
-            }
-        }
-    } else {
-        return { _error: message }
     }
 }
 

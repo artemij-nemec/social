@@ -1,0 +1,15 @@
+.myPostsContainer {
+    border-radius: 2px;
+    padding: 10px;
+    background-color: #fff;
+    margin-left: 5px;
+}
+.header{
+    margin-left: 10px;
+}
+.posts {
+    margin-left: 10px;
+}
+.newPostButton {
+    float: right;
+}

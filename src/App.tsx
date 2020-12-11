@@ -6,6 +6,7 @@ import { connect, Provider } from 'react-redux'
 import { BrowserRouter, Link, Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom'
 import { compose } from 'redux'
 import './App.css'
+import AlertsConatainer from './components/Common/AlertsConatainer/AlertsConatainer'
 import Preloader from './components/Common/Preloader/Preloader'
 import Header from './components/Header/Header'
 import { Login } from './components/Login/Login'
@@ -55,6 +56,7 @@ class App extends Component<PropsType & RouteComponentProps> {
 
     return (
       <Layout>
+        <AlertsConatainer />
         <Header />
         <Content style={{ padding: '0 50px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>

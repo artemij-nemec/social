@@ -40,11 +40,12 @@ const dialogsReducer = (state = initialState, action: ActionsType): DialogsState
     }
 }
 
-export const actions = {
+const actions = {
     sendMessage: (newText: string) => ({
         type: 'SEND_MESSAGE',
         newText
     } as const)
 }
+export { actions as dialogsActions }
 
 export default dialogsReducer

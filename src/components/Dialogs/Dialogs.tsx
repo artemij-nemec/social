@@ -1,8 +1,9 @@
-import React, { Dispatch } from 'react'
-import { Field, FormAction, InjectedFormProps, reduxForm, reset } from 'redux-form'
+import { Button, Form, Input } from 'antd'
+import React from 'react'
+import { useDispatch } from 'react-redux'
+import { dialogsActions } from '../../redux/dialogs-reducer'
 import { DialogType, MessageType } from '../../types/types'
-import { maxLengthCreator, required } from '../../utils/validators/validators'
-import { TextArea } from '../Common/FormControls/FormControls'
+import { maxLengthRuleCreator } from '../../utils/validators/validators'
 import Dialog from './Dialog/Dialog'
 import s from './Dialogs.module.css'
 import Message from './Message/Message'
@@ -11,42 +12,44 @@ type FormPropsType = {
     newMessageText: string
 }
 
-const maxLength = maxLengthCreator(50)
-const AddMessageForm: React.FC<InjectedFormProps<FormPropsType>> = ({ handleSubmit }) => {
-    return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <Field
-                    name="newMessageText"
-                    component={TextArea}
-                    validate={[required, maxLength]}
-                />
-            </div>
-            <div>
-                <button>Add post</button>
-            </div>
-        </form>
-    )
+const AddMessageForm: React.FC = () => {
+    const dispatch = useDispatch()
+    const [form] = Form.useForm()
+    const onFinish = (values: FormPropsType) => {
+        dispatch(dialogsActions.sendMessage(values.newMessageText))
+        form.resetFields()
+    }
+    return <Form
+        form={form}
+        name="my-posts"
+        onFinish={onFinish}
+    >
+        <Form.Item
+            name="newMessageText"
+            rules={[
+                { required: true, message: 'Please input your message!' },
+                maxLengthRuleCreator(50)
+            ]}
+        >
+            <Input.TextArea rows={4} placeholder="New message..." />
+        </Form.Item>
+        <Form.Item>
+            <Button type="primary" htmlType="submit" className={s.addPostButton}>
+                Add post
+            </Button>
+        </Form.Item>
+    </Form>
 }
-const afterSubmit = (result: string, dispatch: Dispatch<FormAction>) => dispatch(reset('addMessage'))
-const AddMessageReduxForm = reduxForm<FormPropsType>({
-    form: 'addMessage',
-    onSubmitSuccess: afterSubmit
-})(AddMessageForm)
 
 type DialogsPropsType = {
     dialogs: Array<DialogType>
     messages: Array<MessageType>
-    addMessage: (newMessageText: string) => void
 }
-const Dialogs: React.FC<DialogsPropsType> = ({ dialogs, messages, addMessage }) => {
+const Dialogs: React.FC<DialogsPropsType> = ({ dialogs, messages }) => {
     const dialogsList = dialogs
         .map(dialogItem => <Dialog name={dialogItem.name} key={dialogItem.id} id={dialogItem.id} />)
     const messagesList = messages
         .map(messageItem => <Message text={messageItem.text} key={messageItem.id} id={messageItem.id} />)
-    let submit = (value: FormPropsType) => {
-        addMessage(value.newMessageText)
-    }
 
     return <div className={s.dialogs}>
         <div className={s.dialogs_items}>
@@ -56,7 +59,7 @@ const Dialogs: React.FC<DialogsPropsType> = ({ dialogs, messages, addMessage }) 
             <div className={s.messages}>
                 {messagesList}
             </div>
-            <AddMessageReduxForm onSubmit={submit} />
+            <AddMessageForm />
         </div>
     </div>
 }

@@ -1,13 +1,8 @@
-.formError {
-    border: 1px solid red;
-}
 .loginForm {
-    width: 200px;
+    max-width: 500px;
+    margin: 0 auto;
 }
-.loginFormInput {
-    width: 100%;
-}
-.loginButton {
-    float: right;
-    width: 75px
+
+.imgContainer {
+    text-align: center;
 }

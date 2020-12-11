@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import defaultAvatar from '../../../assets/images/default_mini_avatar.jpg'
-import { saveProfile } from '../../../redux/profile-reducer'
+import { profileActions, saveProfile } from '../../../redux/profile-reducer'
 import { ContactsType, ProfileType } from '../../../types/types'
 import ProfileData from './ProfileData'
-import { ProfileDataReduxForm } from './ProfileDataForm'
+import { ProfileDataForm } from './ProfileDataForm'
 import s from './ProfileInfo.module.css'
 import ProfileStatus from './ProfileStatus'
 
@@ -17,26 +17,33 @@ const ProfileInfo: React.FC<PropsType> = ({ profile, isOwner }) => {
     const enableEditMode = () => setEditMode(true)
     const dispatch = useDispatch()
     const onSubmit = async (profileData: ProfileType) => {
+        dispatch(profileActions.setUpdating(true))
         await dispatch(saveProfile(profileData))
+        dispatch(profileActions.setUpdating(false))
         setEditMode(false)
     }
-    return <div>
-        <img
-            src={profile.photos.large !== null ? profile.photos.large : defaultAvatar}
-            alt="profile"
-        />
-        {editMode
-            ? <ProfileDataReduxForm
-                contacts={profile.contacts}
-                initialValues={profile}
-                onSubmit={onSubmit}
-                isOwner={isOwner} />
-            : <ProfileData
-                profile={profile}
-                enableEditMode={enableEditMode}
-                isOwner={isOwner} />
-        }
-        <ProfileStatus isOwner={isOwner} />
+
+    return <div className={s.profileContainer}>
+        <div className={s.imgContainer}>
+            <img
+                src={profile?.photos?.large ? profile.photos.large : defaultAvatar}
+                alt="profile"
+            />
+        </div>
+        <div className={s.profileDataContainer}>
+            {editMode
+                ? <ProfileDataForm
+                    contacts={profile.contacts}
+                    initialValues={profile}
+                    onSubmit={onSubmit}
+                    isOwner={isOwner} />
+                : <ProfileData
+                    profile={profile}
+                    enableEditMode={enableEditMode}
+                    isOwner={isOwner} />
+            }
+            <ProfileStatus isOwner={isOwner} />
+        </div>
     </div>
 }
 

@@ -88,20 +88,22 @@ const Users: React.FC = () => {
             onChange={onPageChanged}
             onShowSizeChange={onShowSizeChange}
         />
-        {users.map(user =>
-            <User
-                key={user.id}
-                id={user.id}
-                photos={user.photos}
-                name={user.name}
-                status={user.status}
-                followed={user.followed}
-                followingInProgress={user.followingInProgress}
-                isAuth={isAuth}
-                followUser={follow}
-                unfollowUser={unfollow}
-            />
-        )}
+        <div className={s.usersContainer}>
+            {users.map(user =>
+                <User
+                    key={user.id}
+                    id={user.id}
+                    photos={user.photos}
+                    name={user.name}
+                    status={user.status}
+                    followed={user.followed}
+                    followingInProgress={user.followingInProgress}
+                    isAuth={isAuth}
+                    followUser={follow}
+                    unfollowUser={unfollow}
+                />
+            )}
+        </div>
     </div>
 }
 

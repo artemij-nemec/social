@@ -17,7 +17,7 @@ export const ProfileAPI = {
     async uploadProfilePhoto(file: File) {
         const formData = new FormData()
         formData.append("image", file)
-        const response = await axiosInstance.put<ResponseType<PhotosType>>(`profile/photo`, formData)
+        const response = await axiosInstance.put<ResponseType<{photos: PhotosType}>>(`profile/photo`, formData)
         return response.data
     },
     async uploadProfileData(profileData: ProfileType) {

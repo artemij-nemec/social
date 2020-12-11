@@ -1,11 +1,10 @@
+import { Button, Checkbox, Form, Input } from 'antd'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Field, InjectedFormProps, reduxForm } from 'redux-form'
 import { login } from '../../redux/auth-reducer'
 import { getCaptchaUrl, getIsAuth } from '../../redux/auth-selectors'
-import { maxLengthCreator, required } from '../../utils/validators/validators'
-import { Input } from '../Common/FormControls/FormControls'
+import { maxLengthRuleCreator } from '../../utils/validators/validators'
 import s from './Login.module.css'
 
 //Login redux form
@@ -15,97 +14,92 @@ type LoginFormDataType = {
     rememberMe:     boolean
     captcha:        string
 }
-type LoginFormHandlerType = {
-    handleSubmit:   (value: LoginFormDataType) => void
-}
-type LoginFormType = LoginFormDataType & LoginFormHandlerType
-type OwnPropsType = {
-    captchaUrl: string | null
-}
-const maxLength = maxLengthCreator(50)
-const LoginForm: React.FC<OwnPropsType &
-    InjectedFormProps<LoginFormType, OwnPropsType>
-> = props => {
-    const { handleSubmit, error, captchaUrl } = props
-    return (
-        <form onSubmit={handleSubmit} className={s.loginForm}>
-            <div>
-                <Field
-                    name="email"
-                    component={Input}
-                    validate={[required, maxLength]}
-                    type="text"
-                    placeholder="Login"
-                    className={s.loginFormInput}
-                />
-            </div>
-            <div>
-                <Field
-                    name="password"
-                    component={Input}
-                    validate={[required, maxLength]}
-                    type="password"
-                    placeholder="Password"
-                    className={s.loginFormInput}
-                />
-            </div>
-            <div>
-                <Field
-                    name="rememberMe"
-                    component="input"
-                    type="checkbox"
-                />
-                <label htmlFor="rememberMe">Remember me</label>
-            </div>
-            {captchaUrl &&
-                <>
-                    <img src={captchaUrl} alt="" />
-                    <Field
-                        name="captcha"
-                        component={Input}
-                        validate={[required]}
-                        type="text"
-                        placeholder="Captcha"
-                        className={s.loginFormInput}
-                    />
-                </>
-            }
-            {error &&
-                <div className={s.formError}>
-                    {error}
-                </div>
-            }
-            <div>
-                <button type="submit" className={s.loginButton}>Login</button>
-            </div>
-        </form>
-    )
-}
 
-const LoginReduxForm = reduxForm<LoginFormType, OwnPropsType>({
-    form: 'login'
-})(LoginForm)
+const layout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 16 },
+}
+const tailLayout = {
+    wrapperCol: { offset: 4, span: 16,  },
+}
+const LoginForm: React.FC = () => {
+    const captchaUrl = useSelector(getCaptchaUrl)
+    const dispatch = useDispatch()
+    const [form] = Form.useForm()
+
+    const onFinish = (values: LoginFormDataType) => {
+        dispatch(login(
+            values.email,
+            values.password,
+            values.rememberMe,
+            values.captcha
+        ))
+    }
+
+    return <Form
+        {...layout}
+        form={form}
+        name="login"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        className={s.loginForm}
+    >
+        <Form.Item
+            label="Login"
+            name="email"
+            rules={[
+                { required: true, message: 'Please input your Login!' },
+                maxLengthRuleCreator(50)
+            ]}
+        >
+            <Input />
+        </Form.Item>
+        <Form.Item
+            label="Password"
+            name="password"
+            rules={[
+                { required: true, message: 'Please input your password!' },
+                maxLengthRuleCreator(30)
+            ]}
+        >
+            <Input.Password />
+        </Form.Item>
+        <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+            <Checkbox>Remember me</Checkbox>
+        </Form.Item>
+        {captchaUrl &&
+            <>
+                <Form.Item {...tailLayout}>
+                    <div className={s.imgContainer}>
+                        <img src={captchaUrl} alt="" />
+                    </div>
+                </Form.Item>
+                <Form.Item
+                    label="Captcha"
+                    name="captcha"
+                    rules={[{ required: true, message: 'Please input captcha!' }]}
+                >
+                    <Input />
+                </Form.Item>
+            </>
+        }
+        <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
+                Login
+            </Button>
+        </Form.Item>
+    </Form>
+}
 
 ///Login
 export const Login: React.FC = () => {
     const isAuth = useSelector(getIsAuth)
-    const captchaUrl = useSelector(getCaptchaUrl)
-    const dispatch = useDispatch()
-
-    const submit = (formData: LoginFormType) => {
-        dispatch(login(
-            formData.email,
-            formData.password,
-            formData.rememberMe,
-            formData.captcha
-        ))
-    }
     if (isAuth) {
         return <Redirect to='/profile' />
     }
 
     return (<>
         <h1>Login</h1>
-        <LoginReduxForm onSubmit={submit} captchaUrl={captchaUrl} />
+        <LoginForm />
     </>)
 }
