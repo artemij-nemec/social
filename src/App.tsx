@@ -17,10 +17,12 @@ import store, { RootStateType } from './redux/redux-store'
 
 const { SubMenu } = Menu
 const { Content, Footer, Sider } = Layout
-const UsersContainer = React.lazy(() => import('./components/Users/UsersContainer'))
 const DialogsContainer = React.lazy(() => import('./components/Dialogs/DialogsContainer'))
+const UsersContainer = React.lazy(() => import('./components/Users/UsersContainer'))
+const ChatPage = React.lazy(() => import('./pages/Chat/ChatPage'))
 const SuspendedDialogsContainer = withSuspense(DialogsContainer)
 const SuspendedUsersContainer = withSuspense(UsersContainer)
+const SuspendedChatPage = withSuspense(ChatPage)
 
 type PropsType = ReturnType<typeof mapStateToProps> & {
   initializeApp: () => void
@@ -79,7 +81,7 @@ class App extends Component<PropsType & RouteComponentProps> {
                   </Menu.Item>
                 </SubMenu>
                 <Menu.Item key="messages">
-                  <Link to='/messages'>Messages</Link>
+                  <Link to='/chat'>Chat</Link>
                 </Menu.Item>
                 <Menu.Item key="users">
                   <Link to='/users'>Users</Link>
@@ -96,6 +98,8 @@ class App extends Component<PropsType & RouteComponentProps> {
                   render={() => <SuspendedDialogsContainer />} />
                 <Route path='/users'
                   render={() => <SuspendedUsersContainer />} />
+                <Route path='/chat'
+                  render={() => <SuspendedChatPage />} />
                 <Route path='*'
                   render={() => <div>404 NOT FOUND</div>} />
               </Switch>
