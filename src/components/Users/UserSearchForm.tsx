@@ -20,9 +20,10 @@ export const UserSearchForm: React.FC<PropsType> = ({ onFilterChanged }) => {
     const { Option } = Select
     const [form] = Form.useForm()
     const filter = useSelector(getFilter)
-    let friends = filter.friends === true
+    const friendsBoolToEnum = (friends: boolean | undefined) => friends === true
         ? FriendsVal.Friends
-        : filter.friends === false ? FriendsVal.NotFriends : FriendsVal.FindAll
+        : friends === false ? FriendsVal.NotFriends : FriendsVal.FindAll
+    let friends = friendsBoolToEnum(filter.friends)
     const onFinish = (values: FormType) => {
         let friends = values.friends === FriendsVal.FindAll
             ? undefined
@@ -40,9 +41,9 @@ export const UserSearchForm: React.FC<PropsType> = ({ onFilterChanged }) => {
 
     useEffect(
         () => {
-            form.setFieldsValue({ term: filter.term, friends })
+            form.setFieldsValue({ term: filter.term, filter: friendsBoolToEnum(filter.friends) })
         },
-        [ filter ]
+        [filter, form]
     )
 
     return <Form
