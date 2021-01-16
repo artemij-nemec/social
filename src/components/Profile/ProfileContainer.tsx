@@ -27,7 +27,7 @@ const ProfileContainer: React.FC = () =>  {
                 dispatch(setUser(userId))
             }
         },
-        [ params.userId ]
+        [authorizedUserId, dispatch, history, params.userId]
     )
 
     return <Profile isOwner={!params.userId} />
